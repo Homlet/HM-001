@@ -11,10 +11,10 @@ public class State {
 	
 	public State()
 	{
-		for(int i = 0; i < 5000; i++)
+		for(int i = 0; i < 2500; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.SQUARE, -64, -64, 128, 128, new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat(), Tex.logo);
-			entities.addElement(new Entity(Attr.DISPLAY_HALFWIDTH + (new Random().nextFloat() - 0.5f) * 10, Attr.DISPLAY_HALFHEIGHT + (new Random().nextFloat() - 0.5f) * 10, r));
+			Renderable r = new Renderable(Attr.TYPE.CUBE, -16, -16, -16, 32, 32, 32, new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat(), Tex.logo);
+			entities.addElement(new Entity(Attr.DISPLAY_HALFWIDTH + (new Random().nextFloat() - 0.5f) * 10, Attr.DISPLAY_HALFHEIGHT + (new Random().nextFloat() - 0.5f) * 10, Attr.HALFDEPTH + (new Random().nextFloat() - 0.5f) * 10, r));
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package uk.co.homletmoo.hm001;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
@@ -13,8 +14,6 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 public class Render {
-
-	private int listSquare;
 	
 	public void init()
 	{
@@ -22,8 +21,6 @@ public class Render {
 		glLoadIdentity();
 		glOrtho(0, Attr.DISPLAY_WIDTH, 0, Attr.DISPLAY_HEIGHT, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 		try {
 			// TODO: More flexible icon code
@@ -35,17 +32,17 @@ public class Render {
 			System.exit(1);
 		}
 		
-		listSquare = glGenLists(1);
-		glNewList(listSquare, GL_COMPILE);
-			glBegin(GL_QUADS);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexCoord2f(0, 1);		glVertex2f(0, 0);
-				glTexCoord2f(1, 1);		glVertex2f(1, 0);
-				glTexCoord2f(1, 0);		glVertex2f(1, 1);
-				glTexCoord2f(0, 0);		glVertex2f(0, 1);
-			glEnd();
-		glEndList();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.DEPTH);
+		glMatrixMode(GL_MODELVIEW);
+		glCullFace(GL_BACK);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_DEPTH_TEST);
+	    glDepthFunc(GL_LESS);
+		
+		Prim.initLists();
 	}
 	
 	public void render(Vector<Renderable> stack)
@@ -57,8 +54,9 @@ public class Render {
 		{
 			Renderable r = i.next();
 			glLoadIdentity();
-			glTranslatef(r.x, r.y, 0);
-			glScalef(r.width, r.height, 1);
+			gluLookAt(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT, 1, Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT, Attr.HALFDEPTH, 0, 1, 0);
+			glTranslatef(r.x, r.y, r.z);
+			glScalef(r.width, r.height, r.depth);
 			glColor3f(r.r, r.g, r.b);
 			if(r.tex != null)
 			{
@@ -69,8 +67,8 @@ public class Render {
 			
 			switch(r.type)
 			{
-				case SQUARE:
-					glCallList(listSquare);
+				case CUBE:
+					glCallList(Prim.listCube);
 				break;
 			}
 		}
