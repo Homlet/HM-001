@@ -32,15 +32,18 @@ public class Render {
 			System.exit(1);
 		}
 		
+		glClearDepth(1);
+		glEnable(GL_DEPTH_TEST);
+	    glDepthFunc(GL_LESS);
+		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.DEPTH);
+		gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
 		glMatrixMode(GL_MODELVIEW);
+
 		glCullFace(GL_BACK);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_DEPTH_TEST);
-	    glDepthFunc(GL_LESS);
 		
 		Prim.initLists();
 	}
@@ -54,7 +57,7 @@ public class Render {
 		{
 			Renderable r = i.next();
 			glLoadIdentity();
-			gluLookAt(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT, 1, Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT, Attr.HALFDEPTH, 0, 1, 0);
+			gluLookAt(Attr.HALFSIZE, Attr.HALFSIZE, 1, Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE, 0, 1, 0);
 			glTranslatef(r.x, r.y, r.z);
 			glScalef(r.width, r.height, r.depth);
 			glColor3f(r.r, r.g, r.b);

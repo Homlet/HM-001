@@ -1,14 +1,13 @@
 package uk.co.homletmoo.hm001;
 
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Vector;
 
 public class Entity {
 	
 	private float x, y, z;
 	private Vector<Renderable> graphics;
-	
-	private boolean addition = false;
 	
 	public Entity(float x, float y, float z, Renderable graphic)
 	{
@@ -21,29 +20,12 @@ public class Entity {
 	
 	public void update(int delta)
 	{
-		float vX = Attr.DISPLAY_HALFWIDTH - x;
-		float vY = Attr.DISPLAY_HALFHEIGHT - y;
-		float vZ = Attr.HALFDEPTH - z;
-		vX = (vX / 600) * delta;
-		vY = (vY / 600) * delta;
-		vZ = (vZ / 600) * delta;
-
-		if(Math.abs(vX) >= 1000 && Math.abs(vY) >= 1000 && Math.abs(vZ) >= 1000)
-			addition = true;
-		else if(Math.abs(vX) <= 1 && Math.abs(vY) <= 1 && Math.abs(vZ) <= 1)
-			addition = false;
+		x += (new Random().nextFloat() - 0.5f) * delta / 10;
+		x += (new Random().nextFloat() - 0.5f) * delta / 10;
 		
-		if(addition)
-		{
-			x += vX;
-			y += vY;
-			z += vZ;
-		}else
-		{
-			x -= vX;
-			y -= vY;
-			z -= vZ;
-		}
+		z -= new Random().nextFloat() * delta * 5;
+		if(z <= 0)
+			z = Attr.SIZE;
 		
 		Iterator<Renderable> i = graphics.iterator();
 		while(i.hasNext())
