@@ -5,6 +5,7 @@ import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -18,8 +19,8 @@ public class Render {
 	public void init()
 	{
 		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, Attr.DISPLAY_WIDTH, 0, Attr.DISPLAY_HEIGHT, 1, -1);
+			glLoadIdentity();
+			glOrtho(0, Attr.DISPLAY_WIDTH, 0, Attr.DISPLAY_HEIGHT, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		
 		try {
@@ -34,16 +35,26 @@ public class Render {
 		
 		glClearDepth(1);
 		glEnable(GL_DEPTH_TEST);
-	    glDepthFunc(GL_LESS);
+	    	glDepthFunc(GL_LESS);
 		
 		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
+			glLoadIdentity();
+			gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
 		glMatrixMode(GL_MODELVIEW);
 
 		glCullFace(GL_BACK);
+		
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		glEnable(GL_FOG);
+            FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
+            fogColor.put(0).put(0).put(0).put(1).flip();
+
+            glFogi(GL_FOG_MODE, GL_EXP);
+            glFog(GL_FOG_COLOR, fogColor);
+            glFogf(GL_FOG_DENSITY, 0.0003f);
+            glHint(GL_FOG_HINT, GL_DONT_CARE);
 		
 		Prim.initLists();
 	}

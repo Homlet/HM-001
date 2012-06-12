@@ -8,7 +8,7 @@ public class Attr {
 	/** Height of the display window */
 	public static final int DISPLAY_HEIGHT = 720;
 	/** Size of render zone */
-	public static final int SIZE = 4096;
+	public static final int SIZE = 8192;
 	
 	/** Whether the program should run with debugging features enabled */
 	public static final boolean DEBUGGING = true;

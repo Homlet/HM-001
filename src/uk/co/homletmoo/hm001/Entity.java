@@ -1,7 +1,6 @@
 package uk.co.homletmoo.hm001;
 
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
 
 public class Entity {
@@ -19,11 +18,8 @@ public class Entity {
 	}
 	
 	public void update(int delta)
-	{
-		x += (new Random().nextFloat() - 0.5f) * delta / 10;
-		x += (new Random().nextFloat() - 0.5f) * delta / 10;
-		
-		z -= new Random().nextFloat() * delta * 5;
+	{		
+		z -= 60;
 		if(z <= 0)
 			z = Attr.SIZE;
 		
