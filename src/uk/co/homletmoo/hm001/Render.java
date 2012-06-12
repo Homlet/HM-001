@@ -49,12 +49,13 @@ public class Render {
 		
 		glEnable(GL_FOG);
             FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-            fogColor.put(0).put(0).put(0).put(1).flip();
+            fogColor.put(0.1f).put(0.01f).put(0).put(1).flip();
 
             glFogi(GL_FOG_MODE, GL_EXP);
             glFog(GL_FOG_COLOR, fogColor);
             glFogf(GL_FOG_DENSITY, 0.0003f);
             glHint(GL_FOG_HINT, GL_DONT_CARE);
+            glClearColor(0.1f, 0.01f, 0, 1);
 		
 		Prim.initLists();
 	}
