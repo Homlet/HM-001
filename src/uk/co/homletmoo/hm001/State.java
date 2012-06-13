@@ -13,9 +13,9 @@ public class State {
 	{
 		Random rand = new Random();
 		
-		for(int i = 0; i < 2500; i++)
+		for(int i = 0; i < 3000; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, -24, -24, -24, 48, 48, 48, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), Tex.logo);
+			Renderable r = new Renderable(Attr.TYPE.POINT, 0, 0, 0, 0, 0, 0, 1, 1, 1, null);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}

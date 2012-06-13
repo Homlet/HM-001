@@ -10,11 +10,15 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 public class Render {
+	
+	private boolean fog = true;
+	private int fogToggleTimer = 30;
 	
 	public void init()
 	{
@@ -49,13 +53,15 @@ public class Render {
 		
 		glEnable(GL_FOG);
             FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-            fogColor.put(0.1f).put(0.01f).put(0).put(1).flip();
+            fogColor.put(0).put(0).put(0).put(1).flip();
 
             glFogi(GL_FOG_MODE, GL_EXP);
             glFog(GL_FOG_COLOR, fogColor);
-            glFogf(GL_FOG_DENSITY, 0.0003f);
+            glFogf(GL_FOG_DENSITY, 0.0002f);
             glHint(GL_FOG_HINT, GL_DONT_CARE);
-            glClearColor(0.1f, 0.01f, 0, 1);
+            glClearColor(0, 0, 0, 1);
+        
+        glPointSize(50);
 		
 		Prim.initLists();
 	}
@@ -63,6 +69,22 @@ public class Render {
 	public void render(Vector<Renderable> stack)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		if(fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
+		{
+			if(fog)
+			{
+				glDisable(GL_FOG);
+				fog = false;
+			}
+			else
+			{
+				glEnable(GL_FOG);
+				fog = true;
+			}
+
+			fogToggleTimer = 0;
+		}
 		
 		Iterator<Renderable> i = stack.iterator();
 		while(i.hasNext())
@@ -84,6 +106,10 @@ public class Render {
 			{
 				case CUBE:
 					glCallList(Prim.listCube);
+				break;
+				
+				case POINT:
+					glCallList(Prim.listPoint);
 				break;
 			}
 		}

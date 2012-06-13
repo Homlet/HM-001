@@ -14,7 +14,7 @@ public class Attr {
 	public static final boolean DEBUGGING = true;
 	
 	/** Enumeration of renderable primitive types */
-	public static enum TYPE { CUBE };
+	public static enum TYPE { CUBE, POINT };
 	
 	
 	// Determined at compile-time:

@@ -1,12 +1,14 @@
 package uk.co.homletmoo.hm001;
 
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Vector;
 
 public class Entity {
 	
 	private float x, y, z;
 	private Vector<Renderable> graphics;
+	private Random rand;
 	
 	public Entity(float x, float y, float z, Renderable graphic)
 	{
@@ -15,13 +17,18 @@ public class Entity {
 		this.z = z;
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
+		rand = new Random();
 	}
 	
 	public void update(int delta)
 	{		
 		z -= 60;
 		if(z <= 0)
+		{
 			z = Attr.SIZE;
+			x = rand.nextFloat() * Attr.SIZE;
+			y = rand.nextFloat() * Attr.SIZE;
+		}
 		
 		Iterator<Renderable> i = graphics.iterator();
 		while(i.hasNext())

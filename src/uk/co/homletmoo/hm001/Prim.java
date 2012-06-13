@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Prim {
 	
 	public static int listCube;
+	public static int listPoint;
 	
 	public static void initLists()
 	{
@@ -43,6 +44,13 @@ public class Prim {
 				glTexCoord2f(1, 0);			glVertex3f(1, 1, 0);
 				glTexCoord2f(1, 1);			glVertex3f(1, 0, 0);
 				glTexCoord2f(0, 1);			glVertex3f(1, 0, 1);
+			glEnd();
+		glEndList();
+		
+		listPoint = glGenLists(1);
+		glNewList(listPoint, GL_COMPILE);
+			glBegin(GL_POINTS);
+				glVertex3f(0, 0, 0);
 			glEnd();
 		glEndList();
 	}
