@@ -47,7 +47,7 @@ public class Main {
 		
 		lastFrame = getTime();
 		
-		render  = new Render();
+		render = new Render();
 		render.init();
 		
 		state = new State();

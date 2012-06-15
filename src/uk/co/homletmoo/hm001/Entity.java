@@ -22,7 +22,7 @@ public class Entity {
 	
 	public void update(int delta)
 	{		
-		z -= 60;
+		z -= 120;
 		if(z <= 0)
 		{
 			z = Attr.SIZE;

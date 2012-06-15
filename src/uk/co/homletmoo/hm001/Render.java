@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -12,13 +14,15 @@ import java.util.Vector;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.PNGImageData;
 import org.newdawn.slick.opengl.TextureLoader;
 
 public class Render {
 	
 	private boolean fog = true;
 	private int fogToggleTimer = 30;
+
+	private float camX = 0, camY = 0, camZ = 0;
 	
 	public void init()
 	{
@@ -28,16 +32,14 @@ public class Render {
 		glMatrixMode(GL_MODELVIEW);
 		
 		try {
-			// TODO: More flexible icon code
 			Tex.icon = TextureLoader.getTexture("PNG", new FileInputStream("src/res/favicon.png"));
-			Display.setIcon(assignIcon(Tex.icon));
 			Tex.logo = TextureLoader.getTexture("PNG", new FileInputStream("src/res/HMXLV2.png"));
+			Display.setIcon(assignIcon("src/res/favicon.png"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		glClearDepth(1);
 		glEnable(GL_DEPTH_TEST);
 	    	glDepthFunc(GL_LESS);
 		
@@ -61,7 +63,8 @@ public class Render {
             glHint(GL_FOG_HINT, GL_DONT_CARE);
             glClearColor(0, 0, 0, 1);
         
-        glPointSize(50);
+        glEnable(GL_POINT_SMOOTH);
+		glPointSize(2);
 		
 		Prim.initLists();
 	}
@@ -75,11 +78,14 @@ public class Render {
 			if(fog)
 			{
 				glDisable(GL_FOG);
+				glDisable(GL_POINT_SMOOTH);
+				glPointSize(1);
 				fog = false;
-			}
-			else
+			} else
 			{
 				glEnable(GL_FOG);
+				glEnable(GL_POINT_SMOOTH);
+				glPointSize(2);
 				fog = true;
 			}
 
@@ -92,7 +98,7 @@ public class Render {
 			Renderable r = i.next();
 			glLoadIdentity();
 			gluLookAt(Attr.HALFSIZE, Attr.HALFSIZE, 1, Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE, 0, 1, 0);
-			glTranslatef(r.x, r.y, r.z);
+			glTranslatef(r.x - camX, r.y - camY, r.z - camZ);
 			glScalef(r.width, r.height, r.depth);
 			glColor3f(r.r, r.g, r.b);
 			if(r.tex != null)
@@ -115,39 +121,20 @@ public class Render {
 		}
 	}
 	
-	private ByteBuffer[] assignIcon(Texture icon)
+	private ByteBuffer[] assignIcon(String path)
 	{
-		int drawBuffer = glGetInteger(GL_DRAW_BUFFER);
-		
-		glDrawBuffer(GL_BACK);
-		icon.bind();
-		glEnable(GL_TEXTURE_2D);
-			glBegin(GL_QUADS);
-				glTexCoord2f(0, 0);		glVertex2i(0, 0);
-				glTexCoord2f(1, 0);		glVertex2i(16, 0);
-				glTexCoord2f(1, 1);		glVertex2i(16, 16);
-				glTexCoord2f(0, 1);		glVertex2i(0, 16);
-			glEnd();
-		glDisable(GL_TEXTURE_2D);
-		
-		glReadBuffer(GL_BACK);
-		ByteBuffer bufferedIcon = BufferUtils.createByteBuffer(16 * 16 * 4);
-		glReadPixels(0, 0, 16, 16, GL_RGBA, GL_BYTE, bufferedIcon);
-		
-		for(int y = 0; y < 16; y++)
-			for(int x = 0; x < 16; x++)
-			{
-				int index = y * 4 * 16 + x * 4;
-				bufferedIcon.put(index + 3, (byte) 255);
-				bufferedIcon.put(index, (byte)(bufferedIcon.get(index) * 3));
-				bufferedIcon.put(index + 1, (byte)(bufferedIcon.get(index + 1) * 3));
-				bufferedIcon.put(index + 2, (byte)(bufferedIcon.get(index + 2) * 3));
-			}
-		
-		glDrawBuffer(drawBuffer);
-		
-		ByteBuffer[] bufferedIcons = new ByteBuffer[1];
-		bufferedIcons[0] = bufferedIcon;
-		return bufferedIcons;
+		try {
+			ByteBuffer buffIcon = new PNGImageData().loadImage(new FileInputStream(path));
+			ByteBuffer[] buffIcons = new ByteBuffer[] { buffIcon };
+			return buffIcons;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.exit(0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+		return null;
 	}
 }

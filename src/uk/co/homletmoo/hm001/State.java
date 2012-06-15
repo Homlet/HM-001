@@ -15,7 +15,7 @@ public class State {
 		
 		for(int i = 0; i < 3000; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.POINT, 0, 0, 0, 0, 0, 0, 1, 1, 1, null);
+			Renderable r = new Renderable(Attr.TYPE.CUBE, -8, -8, -256, 16, 16, 512, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), Tex.logo);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}
