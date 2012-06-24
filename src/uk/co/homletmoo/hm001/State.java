@@ -15,12 +15,12 @@ public class State {
 		
 		for(int i = 0; i < 3000; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, -8, -8, -256, 16, 16, 512, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), Tex.logo);
+			Renderable r = new Renderable(Attr.TYPE.CUBE, -32, -32, -32, 64, 64, 64, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), Tex.logo);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}
 	
-	public void update(int delta)
+	public void update(int delta, Input input)
 	{
 		stack.clear();
 		
@@ -28,7 +28,7 @@ public class State {
 		while(i.hasNext())
 		{
 			Entity e = i.next();
-			e.update(delta);
+			e.update(delta, input);
 			e.sendRenderables(stack);
 		}
 	}

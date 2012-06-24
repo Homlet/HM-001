@@ -21,8 +21,9 @@ public class Render {
 	
 	private boolean fog = true;
 	private int fogToggleTimer = 30;
-
+	
 	private float camX = 0, camY = 0, camZ = 0;
+	double camRotX = 0, camRotY = 0;
 	
 	public void init()
 	{
@@ -45,7 +46,7 @@ public class Render {
 		
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(90, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
+			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
 		glMatrixMode(GL_MODELVIEW);
 
 		glCullFace(GL_BACK);
@@ -59,7 +60,7 @@ public class Render {
 
             glFogi(GL_FOG_MODE, GL_EXP);
             glFog(GL_FOG_COLOR, fogColor);
-            glFogf(GL_FOG_DENSITY, 0.0002f);
+            glFogf(GL_FOG_DENSITY, 0.000175f);
             glHint(GL_FOG_HINT, GL_DONT_CARE);
             glClearColor(0, 0, 0, 1);
         
@@ -69,7 +70,7 @@ public class Render {
 		Prim.initLists();
 	}
 	
-	public void render(Vector<Renderable> stack)
+	public void render(Vector<Renderable> stack, Input input)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -92,12 +93,49 @@ public class Render {
 			fogToggleTimer = 0;
 		}
 		
+		camRotX -= input.mouseDX * Attr.SENS_X;
+		double radRotX = degToRad(camRotX);
+		double[] vecRotXZ = radToVec(radRotX);
+		
+		camRotY += input.mouseDY * Attr.SENS_Y;
+		if(camRotY < -90)
+			camRotY = -90;
+		else if(camRotY > 90)
+			camRotY = 90;
+		double radRotY = degToRad(camRotY);
+		double[] vecRotY = radToVec(radRotY);
+		
+		if(input.keys[Attr.P_C_JUMP])
+			camY += Attr.P_SPEED;
+		if(input.keys[Attr.P_C_CROUCH])
+			camY -= Attr.P_SPEED;
+		if(input.keys[Attr.P_C_FORWARD])
+		{
+			camX += vecRotXZ[0] * Attr.P_SPEED;
+			camZ += vecRotXZ[1] * Attr.P_SPEED;
+		}
+		if(input.keys[Attr.P_C_BACKWARD])
+		{
+			camX -= vecRotXZ[0] * Attr.P_SPEED;
+			camZ -= vecRotXZ[1] * Attr.P_SPEED;
+		}
+		if(input.keys[Attr.P_C_LEFT])
+		{
+			camX += vecRotXZ[1] * Attr.P_SPEED;
+			camZ -= vecRotXZ[0] * Attr.P_SPEED;
+		}
+		if(input.keys[Attr.P_C_RIGHT])
+		{
+			camX -= vecRotXZ[1] * Attr.P_SPEED;
+			camZ += vecRotXZ[0] * Attr.P_SPEED;
+		}
+		
 		Iterator<Renderable> i = stack.iterator();
 		while(i.hasNext())
 		{
 			Renderable r = i.next();
 			glLoadIdentity();
-			gluLookAt(Attr.HALFSIZE, Attr.HALFSIZE, 1, Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE, 0, 1, 0);
+			gluLookAt(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE, (float) (Attr.HALFSIZE + vecRotXZ[0] / 2), (float) (Attr.HALFSIZE + vecRotY[0]), (float) (Attr.HALFSIZE + vecRotXZ[1] / 2), 0, 1, 0);
 			glTranslatef(r.x - camX, r.y - camY, r.z - camZ);
 			glScalef(r.width, r.height, r.depth);
 			glColor3f(r.r, r.g, r.b);
@@ -136,5 +174,17 @@ public class Render {
 		}
 
 		return null;
+	}
+	
+	private double degToRad(double degrees)
+	{
+		double radians = degrees * (Math.PI / 180);
+		return radians;
+	}
+	
+	private double[] radToVec(double radians)
+	{
+		double[] vector = new double[] {Math.sin(radians), Math.cos(radians)};
+		return vector;
 	}
 }

@@ -16,6 +16,9 @@ public class Main {
 	/** Renderer object */
 	public Render render;
 	
+	/** Input handler */
+	public Input input;
+	
 	/** Currently active state, update called in loop */
 	public State state;
 	
@@ -50,6 +53,9 @@ public class Main {
 		render = new Render();
 		render.init();
 		
+		input = new Input();
+		input.pollInput();
+		
 		state = new State();
 		
 		loop();
@@ -58,17 +64,19 @@ public class Main {
 	/** Main logical loop */
 	public void loop()
 	{
-		while(!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		while(!Display.isCloseRequested() && !input.keys[Keyboard.KEY_ESCAPE])
 		{
 			int delta = getDelta();
 			update(delta);
 			
-			render.render(stack);
-			
+			render.render(stack, input);
+
+			input.pollInput();
 			Display.update();
 			Display.sync(60);
 		}
 		
+		input.ungrab();
 		Display.destroy();
 		System.exit(0);
 	}
@@ -76,7 +84,7 @@ public class Main {
 	/** Update call: calls updates for states and pan-state objects */
 	public void update(int delta)
 	{
-		state.update(delta);
+		state.update(delta, input);
 		stack.clear();
 		stack.addAll(state.stack);
 	}

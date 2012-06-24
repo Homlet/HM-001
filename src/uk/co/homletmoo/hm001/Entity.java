@@ -9,6 +9,7 @@ public class Entity {
 	private float x, y, z;
 	private Vector<Renderable> graphics;
 	private Random rand;
+	private int speed;
 	
 	public Entity(float x, float y, float z, Renderable graphic)
 	{
@@ -18,18 +19,31 @@ public class Entity {
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
 		rand = new Random();
+		speed = rand.nextInt(110) + 5;
 	}
 	
-	public void update(int delta)
-	{		
-		z -= 120;
-		if(z <= 0)
+	public void update(int delta, Input input)
+	{
+		if(input.mouseLeft)
+			z -= speed;
+		else if(input.mouseRight)
+			z += speed;
+		
+		if(z < 0)
 		{
 			z = Attr.SIZE;
 			x = rand.nextFloat() * Attr.SIZE;
 			y = rand.nextFloat() * Attr.SIZE;
+		}else if(z > Attr.SIZE)
+		{
+			z = 0;
+			x = rand.nextFloat() * Attr.SIZE;
+			y = rand.nextFloat() * Attr.SIZE;
 		}
-		
+	}
+	
+	public void sendRenderables(Vector<Renderable> stack)
+	{
 		Iterator<Renderable> i = graphics.iterator();
 		while(i.hasNext())
 		{
@@ -38,10 +52,7 @@ public class Entity {
 			r.y = r.offsetY + y;
 			r.z = r.offsetZ + z;
 		}
-	}
-	
-	public void sendRenderables(Vector<Renderable> stack)
-	{
+		
 		stack.addAll(graphics);
 	}
 }
