@@ -49,7 +49,8 @@ public class Render {
 			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
 		glMatrixMode(GL_MODELVIEW);
 
-		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
 		
 		glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

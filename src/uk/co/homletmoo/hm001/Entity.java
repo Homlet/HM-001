@@ -19,7 +19,7 @@ public class Entity {
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
 		rand = new Random();
-		speed = rand.nextInt(110) + 5;
+		speed = rand.nextInt(50) + 5;
 	}
 	
 	public void update(int delta, Input input)
