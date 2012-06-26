@@ -69,7 +69,7 @@ public class Main {
 			int delta = getDelta();
 			update(delta);
 			
-			render.render(stack, input);
+			render.render(stack, input, state.player);
 
 			input.pollInput();
 			Display.update();

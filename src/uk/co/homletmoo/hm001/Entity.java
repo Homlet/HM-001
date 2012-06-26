@@ -42,7 +42,7 @@ public class Entity {
 		}
 	}
 	
-	public void sendRenderables(Vector<Renderable> stack)
+	public void getRenderables(Vector<Renderable> stack)
 	{
 		Iterator<Renderable> i = graphics.iterator();
 		while(i.hasNext())

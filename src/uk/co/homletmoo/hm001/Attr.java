@@ -40,10 +40,10 @@ public class Attr {
 		/** Control for strafing right */
 		public static final int P_C_RIGHT = Keyboard.KEY_D;
 		
-		/** Control for jumping / flying up */
+		/** Control for jumping */
 		public static final int P_C_JUMP = Keyboard.KEY_SPACE;
 		
-		/** Control for crouching / falling down */
+		/** Control for crouching */
 		public static final int P_C_CROUCH = Keyboard.KEY_LSHIFT;
 	
 	

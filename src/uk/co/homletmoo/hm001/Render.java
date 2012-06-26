@@ -22,9 +22,6 @@ public class Render {
 	private boolean fog = true;
 	private int fogToggleTimer = 30;
 	
-	private float camX = 0, camY = 0, camZ = 0;
-	double camRotX = 0, camRotY = 0;
-	
 	public void init()
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -57,13 +54,13 @@ public class Render {
 		
 		glEnable(GL_FOG);
             FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-            fogColor.put(0).put(0).put(0).put(1).flip();
+            fogColor.put(0.5f).put(0.7f).put(1).put(1).flip();
 
             glFogi(GL_FOG_MODE, GL_EXP);
             glFog(GL_FOG_COLOR, fogColor);
             glFogf(GL_FOG_DENSITY, 0.000175f);
             glHint(GL_FOG_HINT, GL_DONT_CARE);
-            glClearColor(0, 0, 0, 1);
+            glClearColor(0.5f, 0.7f, 1, 1);
         
         glEnable(GL_POINT_SMOOTH);
 		glPointSize(2);
@@ -71,7 +68,7 @@ public class Render {
 		Prim.initLists();
 	}
 	
-	public void render(Vector<Renderable> stack, Input input)
+	public void render(Vector<Renderable> stack, Input input, Player player)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -94,50 +91,13 @@ public class Render {
 			fogToggleTimer = 0;
 		}
 		
-		camRotX -= input.mouseDX * Attr.SENS_X;
-		double radRotX = degToRad(camRotX);
-		double[] vecRotXZ = radToVec(radRotX);
-		
-		camRotY += input.mouseDY * Attr.SENS_Y;
-		if(camRotY < -90)
-			camRotY = -90;
-		else if(camRotY > 90)
-			camRotY = 90;
-		double radRotY = degToRad(camRotY);
-		double[] vecRotY = radToVec(radRotY);
-		
-		if(input.keys[Attr.P_C_JUMP])
-			camY += Attr.P_SPEED;
-		if(input.keys[Attr.P_C_CROUCH])
-			camY -= Attr.P_SPEED;
-		if(input.keys[Attr.P_C_FORWARD])
-		{
-			camX += vecRotXZ[0] * Attr.P_SPEED;
-			camZ += vecRotXZ[1] * Attr.P_SPEED;
-		}
-		if(input.keys[Attr.P_C_BACKWARD])
-		{
-			camX -= vecRotXZ[0] * Attr.P_SPEED;
-			camZ -= vecRotXZ[1] * Attr.P_SPEED;
-		}
-		if(input.keys[Attr.P_C_LEFT])
-		{
-			camX += vecRotXZ[1] * Attr.P_SPEED;
-			camZ -= vecRotXZ[0] * Attr.P_SPEED;
-		}
-		if(input.keys[Attr.P_C_RIGHT])
-		{
-			camX -= vecRotXZ[1] * Attr.P_SPEED;
-			camZ += vecRotXZ[0] * Attr.P_SPEED;
-		}
-		
 		Iterator<Renderable> i = stack.iterator();
 		while(i.hasNext())
 		{
 			Renderable r = i.next();
 			glLoadIdentity();
-			gluLookAt(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE, (float) (Attr.HALFSIZE + vecRotXZ[0] / 2), (float) (Attr.HALFSIZE + vecRotY[0]), (float) (Attr.HALFSIZE + vecRotXZ[1] / 2), 0, 1, 0);
-			glTranslatef(r.x - camX, r.y - camY, r.z - camZ);
+			gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
+			glTranslatef(r.x - player.x, r.y - player.y, r.z - player.z);
 			glScalef(r.width, r.height, r.depth);
 			glColor3f(r.r, r.g, r.b);
 			if(r.tex != null)
@@ -175,17 +135,5 @@ public class Render {
 		}
 
 		return null;
-	}
-	
-	private double degToRad(double degrees)
-	{
-		double radians = degrees * (Math.PI / 180);
-		return radians;
-	}
-	
-	private double[] radToVec(double radians)
-	{
-		double[] vector = new double[] {Math.sin(radians), Math.cos(radians)};
-		return vector;
 	}
 }

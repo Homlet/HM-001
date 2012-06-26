@@ -12,6 +12,7 @@ public class Input {
 	public Input()
 	{
 		grab();
+		Mouse.setCursorPosition(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 	}
 	
 	public void pollInput()
