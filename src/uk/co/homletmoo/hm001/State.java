@@ -9,14 +9,13 @@ public class State {
 	public Vector<Renderable> stack = new Vector<Renderable>();
 	public Player player = new Player(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE);
 	private Vector<Entity> entities = new Vector<Entity>();
+	private Random rand = new Random();
 	
 	public State()
-	{		
-		Random rand = new Random();
-		
-		for(int i = 0; i < 3000; i++)
+	{
+		for(int i = 0; i < 1000; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, -32, -32, -32, 64, 64, 64, 0.3f, 0.3f, 0.3f, Tex.logo);
+			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 64, 64, 64, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), null);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}

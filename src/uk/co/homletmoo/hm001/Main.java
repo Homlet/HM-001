@@ -10,6 +10,9 @@ import org.lwjgl.opengl.DisplayMode;
 
 public class Main {
 	
+	/** Time at first frame (for calulating runtime) */
+	public long firstFrame;
+	
 	/** Time at last frame */
 	public long lastFrame;
 	
@@ -27,8 +30,7 @@ public class Main {
 	
 	public static void main(String[] args)
 	{
-		Main m = new Main();
-		m.start();
+		new Main().start();
 	}
 	
 	/** Initialise the program */
@@ -48,7 +50,7 @@ public class Main {
 			System.exit(1);
 		}
 		
-		lastFrame = getTime();
+		lastFrame = firstFrame = getTime();
 		
 		render = new Render();
 		render.init();
@@ -69,7 +71,7 @@ public class Main {
 			int delta = getDelta();
 			update(delta);
 			
-			render.render(stack, input, state.player);
+			render.render((int)(getTime() - firstFrame), stack, input, state.player);
 
 			input.pollInput();
 			Display.update();
@@ -77,6 +79,7 @@ public class Main {
 		}
 		
 		input.ungrab();
+		render.cleanup();
 		Display.destroy();
 		System.exit(0);
 	}
@@ -89,12 +92,6 @@ public class Main {
 		stack.addAll(state.stack);
 	}
 	
-	/** Returns the time in milliseconds */
-	public long getTime()
-	{
-		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-	}
-	
 	/** Calculates the number of milliseconds since the last frame */
 	public int getDelta()
 	{
@@ -103,6 +100,12 @@ public class Main {
 		lastFrame = time;
 		
 		return delta;
+	}
+	
+	/** Returns the time in milliseconds */
+	public static long getTime()
+	{
+		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 
 }
