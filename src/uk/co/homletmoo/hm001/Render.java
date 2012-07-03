@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
@@ -29,8 +28,7 @@ public class Render {
 	private boolean fogFlag = true, shaderFlag = true;
 	private int fogToggleTimer = 30;
 	private int shaderProgram = 0, vertShader = 0, fragShader = 0;
-	private int locTime, locRand;
-	private Random rand = new Random();
+	private int locTime;
 	
 	public void init()
 	{
@@ -102,6 +100,17 @@ public class Render {
 			glFog(GL_FOG_COLOR, fogColor);
 			glFogf(GL_FOG_DENSITY, 0.0003f);
 			glHint(GL_FOG_HINT, GL_DONT_CARE);
+			
+			FloatBuffer l0Pos = BufferUtils.createFloatBuffer(4);
+			fogColor.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
+			FloatBuffer l0Amb = BufferUtils.createFloatBuffer(4);
+			fogColor.put(0.4f).put(0.4f).put(0.4f).put(1.0f).flip();
+			FloatBuffer l0Diff = BufferUtils.createFloatBuffer(4);
+			fogColor.put(0.7f).put(0.7f).put(0.7f).put(1.0f).flip();
+
+			glLight(GL_LIGHT0, GL_POSITION, l0Pos);
+			glLight(GL_LIGHT0, GL_AMBIENT, l0Amb);
+			glLight(GL_LIGHT0, GL_DIFFUSE, l0Diff);
 	    
         glClearColor(0, 0, 0, 1);
         
@@ -112,13 +121,16 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE);
+			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE * 2);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		
+		glEnable(GL_SCISSOR_TEST);
+			glScissor(0, 0, Attr.DISPLAY_WIDTH, Attr.DISPLAY_HEIGHT);
 	}
 
-	public void render(int time, Vector<Renderable> stack, Input input, Player player)
+	public void render(int time, Vector<Renderable> stack, Block[] blocks, Input input, Player player)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -146,7 +158,8 @@ public class Render {
 		{
 			Renderable r = i.next();
 			glLoadIdentity();
-			gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
+			glRotatef(-player.rotY, 1, 0, 0);
+			glRotatef(-player.rotX, 0, 1, 0);
 			glTranslatef(r.x - player.x, r.y - player.y, r.z - player.z);
 			glScalef(r.width / 2, r.height / 2, r.depth / 2);
 			glColor3f(r.r, r.g, r.b);
@@ -163,8 +176,6 @@ public class Render {
 				ARBShaderObjects.glUseProgramObjectARB(shaderProgram);
 				locTime = ARBShaderObjects.glGetUniformLocationARB(shaderProgram, "time");
 				ARBShaderObjects.glUniform1fARB(locTime, time);
-				locRand = ARBShaderObjects.glGetUniformLocationARB(shaderProgram, "rand");
-				ARBShaderObjects.glUniform1fARB(locRand, (rand.nextFloat() * 2) - 1.0f);
 			}
 			
 			switch(r.type)
@@ -180,6 +191,27 @@ public class Render {
 			
 			ARBShaderObjects.glUseProgramObjectARB(0);
 		}
+		
+		for(int b = 0; b < blocks.length; b++)
+		{
+			if(blocks[b] == null)
+			{
+				System.err.println("Octree not properly populated.");
+				System.exit(-1);
+			} else if(blocks[b].id == Block.hm)
+			{
+				glLoadIdentity();
+				glRotatef(-player.rotY, 1, 0, 0);
+				glRotatef(-player.rotX, 0, 1, 0);
+				glTranslatef(blocks[b].xGr * 64 - player.x, blocks[b].yGr * 64 - player.y, blocks[b].zGr * 64 - player.z);
+				glScalef(64 / 2, 64 / 2, 64 / 2);
+				glColor3f(1, 0, 0);
+				glCallList(Prim.listCube);
+			}
+		}
+
+		glLoadIdentity();
+		gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
 	}
 	
 	public void cleanup()
@@ -254,7 +286,7 @@ public class Render {
 			e.printStackTrace();
 			System.exit(0);
 		}
-
+		
 		return null;
 	}
 	

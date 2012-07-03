@@ -30,25 +30,25 @@ public class Player {
 		
 		if(input.keys[Attr.P_C_FORWARD])
 		{
-			x += vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED;
-			z += vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED;
+			x -= vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED;
+			z -= vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED;
 			y += vecRotY[0] * Attr.P_SPEED;
 		}
 		if(input.keys[Attr.P_C_BACKWARD])
 		{
-			x -= vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED;
-			z -= vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED;
+			x += vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED;
+			z += vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED;
 			y -= vecRotY[0] * Attr.P_SPEED;
 		}
 		if(input.keys[Attr.P_C_LEFT])
 		{
-			x += vecRotXZ[1] * Attr.P_SPEED;
-			z -= vecRotXZ[0] * Attr.P_SPEED;
+			x -= vecRotXZ[1] * Attr.P_SPEED;
+			z += vecRotXZ[0] * Attr.P_SPEED;
 		}
 		if(input.keys[Attr.P_C_RIGHT])
 		{
-			x -= vecRotXZ[1] * Attr.P_SPEED;
-			z += vecRotXZ[0] * Attr.P_SPEED;
+			x += vecRotXZ[1] * Attr.P_SPEED;
+			z -= vecRotXZ[0] * Attr.P_SPEED;
 		}
 		if(input.keys[Attr.P_C_JUMP])
 			y += Attr.P_SPEED;

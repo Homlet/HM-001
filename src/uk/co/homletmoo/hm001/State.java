@@ -7,13 +7,16 @@ import java.util.Vector;
 public class State {
 	
 	public Vector<Renderable> stack = new Vector<Renderable>();
+	public Block[] blocks;
 	public Player player = new Player(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE);
 	private Vector<Entity> entities = new Vector<Entity>();
 	private Random rand = new Random();
+	private Octree world;
 	
 	public State()
 	{
-		for(int i = 0; i < 1000; i++)
+		world = new Octree(5);
+		for(int i = 0; i < 0; i++)
 		{
 			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 64, 64, 64, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), null);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
@@ -25,6 +28,7 @@ public class State {
 		stack.clear();
 		
 		player.update(delta, input);
+		blocks = world.getBlocks();
 		
 		Iterator<Entity> i = entities.iterator();
 		while(i.hasNext())

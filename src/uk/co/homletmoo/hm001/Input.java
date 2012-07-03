@@ -19,9 +19,11 @@ public class Input {
 	{
 		mouseX = Mouse.getX();
 		mouseY = Mouse.getY();
-
-		mouseDX = mouseX - Attr.DISPLAY_HALFWIDTH;
-		mouseDY = mouseY - Attr.DISPLAY_HALFHEIGHT;
+		
+		mouseDX /= 1.15;
+		mouseDY /= 1.15;
+		mouseDX += (mouseX - Attr.DISPLAY_HALFWIDTH) / 8;
+		mouseDY += (mouseY - Attr.DISPLAY_HALFHEIGHT) / 8;
 		
 		Mouse.setCursorPosition(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 		

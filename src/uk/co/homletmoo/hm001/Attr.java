@@ -11,7 +11,7 @@ public class Attr {
 		/** Height of the display window */
 		public static final int DISPLAY_HEIGHT = 720;
 		/** Size of render zone */
-		public static final int SIZE = 8192;
+		public static final int SIZE = 2048;
 	
 		/** Mouse X-sensitivity */
 		public static final double SENS_X = 0.1;

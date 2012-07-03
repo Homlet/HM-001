@@ -70,8 +70,10 @@ public class Main {
 		{
 			int delta = getDelta();
 			update(delta);
+			System.out.println("Rendering...");
 			
-			render.render((int)(getTime() - firstFrame), stack, input, state.player);
+			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player);
+			System.out.println("Updating...");
 
 			input.pollInput();
 			Display.update();
