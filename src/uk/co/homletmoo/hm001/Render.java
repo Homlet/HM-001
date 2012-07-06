@@ -25,8 +25,12 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 public class Render {
 	
-	private boolean fogFlag = true, shaderFlag = true;
+	// DEBUGGING ONLY:
+	private boolean fogFlag = true;
 	private int fogToggleTimer = 30;
+	private Block[] bfreeze;
+	
+	private boolean shaderFlag = true;
 	private int shaderProgram = 0, vertShader = 0, fragShader = 0;
 	private int locTime;
 	
@@ -96,21 +100,9 @@ public class Render {
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 			fogColor.put(0).put(0).put(0).put(1).flip();
 			
-			glFogi(GL_FOG_MODE, GL_EXP);
+			glFogi(GL_FOG_MODE, GL_EXP2);
 			glFog(GL_FOG_COLOR, fogColor);
-			glFogf(GL_FOG_DENSITY, 0.0003f);
 			glHint(GL_FOG_HINT, GL_DONT_CARE);
-			
-			FloatBuffer l0Pos = BufferUtils.createFloatBuffer(4);
-			fogColor.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
-			FloatBuffer l0Amb = BufferUtils.createFloatBuffer(4);
-			fogColor.put(0.4f).put(0.4f).put(0.4f).put(1.0f).flip();
-			FloatBuffer l0Diff = BufferUtils.createFloatBuffer(4);
-			fogColor.put(0.7f).put(0.7f).put(0.7f).put(1.0f).flip();
-
-			glLight(GL_LIGHT0, GL_POSITION, l0Pos);
-			glLight(GL_LIGHT0, GL_AMBIENT, l0Amb);
-			glLight(GL_LIGHT0, GL_DIFFUSE, l0Diff);
 	    
         glClearColor(0, 0, 0, 1);
         
@@ -121,7 +113,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, Attr.SIZE * 2);
+			gluPerspective(75, Attr.DISPLAY_WIDTH / Attr.DISPLAY_HEIGHT, 1, (int) (Attr.SIZE * 1.5));
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -134,17 +126,20 @@ public class Render {
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		if(fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
+		if(Attr.DEBUGGING && fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
 		{
 			if(fogFlag)
 			{
-				glDisable(GL_FOG);
+				bfreeze = new Block[blocks.length];
+				for(int i = 0; i < blocks.length; i++)
+					bfreeze[i] = blocks[i];
+				//glDisable(GL_FOG);
 				glDisable(GL_POINT_SMOOTH);
 				glPointSize(1);
 				fogFlag = false;
 			} else
 			{
-				glEnable(GL_FOG);
+				//glEnable(GL_FOG);
 				glEnable(GL_POINT_SMOOTH);
 				glPointSize(2);
 				fogFlag = true;
@@ -192,23 +187,42 @@ public class Render {
 			ARBShaderObjects.glUseProgramObjectARB(0);
 		}
 		
-		for(int b = 0; b < blocks.length; b++)
+		if(fogFlag)
 		{
-			if(blocks[b] == null)
+			//glEnable(GL_TEXTURE_2D);
+			for(int b = 0; b < blocks.length; b++)
 			{
-				System.err.println("Octree not properly populated.");
-				System.exit(-1);
-			} else if(blocks[b].id == Block.hm)
-			{
-				glLoadIdentity();
-				glRotatef(-player.rotY, 1, 0, 0);
-				glRotatef(-player.rotX, 0, 1, 0);
-				glTranslatef(blocks[b].xGr * 64 - player.x, blocks[b].yGr * 64 - player.y, blocks[b].zGr * 64 - player.z);
-				glScalef(64 / 2, 64 / 2, 64 / 2);
-				glColor3f(1, 0, 0);
-				glCallList(Prim.listCube);
+				if(blocks[b] != null && blocks[b].id == Block.hm)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[b].xGr * 64 - player.x, blocks[b].yGr * 64 - player.y, blocks[b].zGr * 64 - player.z);
+					glScalef(64 / 2, 64 / 2, 64 / 2);
+					glColor3f(1, 0, 0);
+					glCallList(Prim.listCube);
+				}
 			}
 		}
+		else
+		{
+			glDisable(GL_TEXTURE_2D);
+			for(int b = 0; b < blocks.length; b++)
+			{
+				if(bfreeze[b] != null && bfreeze[b].id == Block.hm)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(bfreeze[b].xGr * 64 - player.x, bfreeze[b].yGr * 64 - player.y, bfreeze[b].zGr * 64 - player.z);
+					glScalef(64 / 2, 64 / 2, 64 / 2);
+					glColor3f(1, 0, 0);
+					glCallList(Prim.listCube);
+				}
+			}
+		}
+		
+		glFogf(GL_FOG_DENSITY, Math.min(0.1f, Math.max(0.0007f, 0.00000095f * (Attr.SIZE - player.y))));
 
 		glLoadIdentity();
 		gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
@@ -288,6 +302,16 @@ public class Render {
 		}
 		
 		return null;
+	}
+	
+	public static float dotVector3f(float[] v1, float[] v2)
+	{
+		return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
+	}
+	
+	public static float[] subVector3f(float[] v1, float[] v2)
+	{
+		return new float[] { v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2] };
 	}
 	
 	private static boolean printLogInfo(int obj)

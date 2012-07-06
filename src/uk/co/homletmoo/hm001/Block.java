@@ -27,4 +27,10 @@ public class Block {
 		this.zGr = zGr;
 		this.size = 1;
 	}
+	
+	public Block setID(byte id)
+	{
+		this.id = id;
+		return this;
+	}
 }

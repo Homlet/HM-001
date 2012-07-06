@@ -12,6 +12,8 @@ public class Attr {
 		public static final int DISPLAY_HEIGHT = 720;
 		/** Size of render zone */
 		public static final int SIZE = 2048;
+		/** Standard Octree block size */
+		public static final float BLOCK_SIZE = 64;
 	
 		/** Mouse X-sensitivity */
 		public static final double SENS_X = 0.1;
@@ -26,7 +28,7 @@ public class Attr {
 		
 		// Player variables:
 		/** Speed of player walking */
-		public static final float P_SPEED = 15;
+		public static final float P_SPEED = 0.8f;
 		
 		/** Control for walking forwards */
 		public static final int P_C_FORWARD = Keyboard.KEY_W;

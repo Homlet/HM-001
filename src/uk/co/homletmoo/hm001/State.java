@@ -28,7 +28,7 @@ public class State {
 		stack.clear();
 		
 		player.update(delta, input);
-		blocks = world.getBlocks();
+		blocks = world.getBlocks(player, delta, input);
 		
 		Iterator<Entity> i = entities.iterator();
 		while(i.hasNext())
