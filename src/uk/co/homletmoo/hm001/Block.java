@@ -1,36 +1,23 @@
 package uk.co.homletmoo.hm001;
 
+import java.util.Random;
+
 public class Block {
 
-	// Block types:
-	public static final byte air = (byte) -128;
-	public static final byte hm = (byte) -127;
+	public int x, y, z;
+	public float r, g, b;
+	public boolean active;
+	public boolean changed = true;
+	private Random rand = new Random();
 	
-	public byte id;
-	public short xGr, yGr, zGr, size;
-	public boolean updated = true;
-	
-	public Block(byte id, short xGr, short yGr, short zGr, short size)
+	public Block(int x, int y, int z, float r, float g, float b, boolean active)
 	{
-		this.id = id;
-		this.xGr = xGr;
-		this.yGr = yGr;
-		this.zGr = zGr;
-		this.size = size;
-	}
-	
-	public Block(byte id, short xGr, short yGr, short zGr)
-	{
-		this.id = id;
-		this.xGr = xGr;
-		this.yGr = yGr;
-		this.zGr = zGr;
-		this.size = 1;
-	}
-	
-	public Block setID(byte id)
-	{
-		this.id = id;
-		return this;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.r = (float) (r + rand.nextFloat() / 10 - 0.05);
+		this.g = (float) (g + rand.nextFloat() / 10 - 0.05);
+		this.b = (float) (b + rand.nextFloat() / 10 - 0.05);
+		this.active = active;
 	}
 }

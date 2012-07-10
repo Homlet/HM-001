@@ -11,14 +11,15 @@ public class State {
 	public Player player = new Player(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE);
 	private Vector<Entity> entities = new Vector<Entity>();
 	private Random rand = new Random();
-	private Octree world;
+	private World w;
 	
 	public State()
 	{
-		world = new Octree(5);
-		for(int i = 0; i < 0; i++)
+		w = new World(2);
+		
+		for(int i = 0; i < 60; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 64, 64, 64, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), null);
+			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 256, 256, 256, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), null);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}
@@ -28,7 +29,8 @@ public class State {
 		stack.clear();
 		
 		player.update(delta, input);
-		blocks = world.getBlocks(player, delta, input);
+		w.update(delta, input);
+		blocks = w.getBlocks();
 		
 		Iterator<Entity> i = entities.iterator();
 		while(i.hasNext())

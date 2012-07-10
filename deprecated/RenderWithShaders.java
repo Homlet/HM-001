@@ -4,16 +4,22 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 import static uk.co.homletmoo.hm001.Attr.*;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.PNGImageData;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -23,6 +29,10 @@ public class Render {
 	// DEBUGGING ONLY:
 	private boolean fogFlag = true;
 	private int fogToggleTimer = 30;
+	
+	private boolean shaderFlag = true;
+	private int shaderProgram = 0, vertShader = 0, fragShader = 0;
+	private int locTime;
 	
 	public void init()
 	{
@@ -36,6 +46,41 @@ public class Render {
 			Display.destroy();
 			System.exit(1);
 		}
+		
+		// Initialise shader program
+		shaderProgram = ARBShaderObjects.glCreateProgramObjectARB();
+		
+		// If shader initialised, initialise and compile shaders
+		if(shaderProgram != 0)
+		{
+			vertShader = createVertShader("src/shader/shader.vp");
+			fragShader = createFragShader("src/shader/shader.fp");
+		}
+		else
+			shaderFlag = false;
+		
+		// If shaders initialised and compiled, attach shaders to program, link, and verify
+		if(vertShader != 0 && fragShader != 0)
+		{
+			ARBShaderObjects.glAttachObjectARB(shaderProgram, vertShader);
+			ARBShaderObjects.glAttachObjectARB(shaderProgram, fragShader);
+			
+			ARBShaderObjects.glLinkProgramARB(shaderProgram);
+			if(ARBShaderObjects.glGetObjectParameteriARB(shaderProgram, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL_FALSE)
+			{
+				printLogInfo(shaderProgram);
+				shaderFlag = false;
+			}
+			
+			ARBShaderObjects.glValidateProgramARB(shaderProgram);
+			if(ARBShaderObjects.glGetObjectParameteriARB(shaderProgram, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL_FALSE)
+			{
+				printLogInfo(shaderProgram);
+				shaderFlag = false;
+			}
+		}
+		else
+			shaderFlag = false;
 		
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
@@ -119,6 +164,13 @@ public class Render {
 			} else
 				glDisable(GL_TEXTURE_2D);
 			
+			if(shaderFlag)
+			{
+				ARBShaderObjects.glUseProgramObjectARB(shaderProgram);
+				locTime = ARBShaderObjects.glGetUniformLocationARB(shaderProgram, "time");
+				ARBShaderObjects.glUniform1fARB(locTime, time);
+			}
+			
 			switch(r.type)
 			{
 				case CUBE:
@@ -130,6 +182,7 @@ public class Render {
 				break;
 			}
 			
+			ARBShaderObjects.glUseProgramObjectARB(0);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -154,6 +207,60 @@ public class Render {
 	public void cleanup()
 	{
 		//TODO: cleanup method
+	}
+
+	private int createVertShader(String filename)
+	{
+		vertShader = ARBShaderObjects.glCreateShaderObjectARB(ARBVertexShader.GL_VERTEX_SHADER_ARB);
+		if(vertShader == 0)
+			return 0;
+		String vertexCode = "";
+		String line;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			while((line = reader.readLine()) != null)
+				vertexCode += line + '\n';
+		} catch(Exception e) {
+			System.err.println("Failed to import vertex shader code.");
+			return 0;
+		}
+		
+		ARBShaderObjects.glShaderSourceARB(vertShader, vertexCode);
+		ARBShaderObjects.glCompileShaderARB(vertShader);
+		if(ARBShaderObjects.glGetObjectParameteriARB(vertShader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+		{
+			printLogInfo(vertShader);
+			vertShader = 0;
+		}
+		
+		return vertShader;
+	}
+	
+	private int createFragShader(String filename)
+	{
+		fragShader = ARBShaderObjects.glCreateShaderObjectARB(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+		if(fragShader == 0)
+			return 0;
+		String fragCode = "";
+		String line;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			while((line = reader.readLine()) != null)
+				fragCode += line + '\n';
+		} catch(Exception e) {
+			System.err.println("Failed to import fragment shader code.");
+			return 0;
+		}
+		
+		ARBShaderObjects.glShaderSourceARB(fragShader, fragCode);
+		ARBShaderObjects.glCompileShaderARB(fragShader);
+		if(ARBShaderObjects.glGetObjectParameteriARB(fragShader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+		{
+			printLogInfo(fragShader);
+			fragShader = 0;
+		}
+		
+		return fragShader;
 	}
 	
 	private ByteBuffer[] assignIcon(String path)
@@ -181,5 +288,26 @@ public class Render {
 	public static float[] subVector3f(float[] v1, float[] v2)
 	{
 		return new float[] { v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2] };
+	}
+	
+	private static boolean printLogInfo(int obj)
+	{
+		IntBuffer iVal = BufferUtils.createIntBuffer(1);
+		ARBShaderObjects.glGetObjectParameterARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB, iVal);
+		
+		int length = iVal.get();
+		if(length > 1)
+		{
+			ByteBuffer infoLog = BufferUtils.createByteBuffer(length);
+			iVal.flip();
+			ARBShaderObjects.glGetInfoLogARB(obj, iVal, infoLog);
+			byte[] infoBytes = new byte[length];
+			infoLog.get(infoBytes);
+			String out = new String(infoBytes);
+			System.err.println("Info log:\n" + out);
+		}
+		else
+			return true;
+		return false;
 	}
 }

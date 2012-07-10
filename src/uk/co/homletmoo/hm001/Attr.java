@@ -11,9 +11,7 @@ public class Attr {
 		/** Height of the display window */
 		public static final int DISPLAY_HEIGHT = 720;
 		/** Size of render zone */
-		public static final int SIZE = 2048;
-		/** Standard Octree block size */
-		public static final float BLOCK_SIZE = 64;
+		public static final int SIZE = 8192;
 	
 		/** Mouse X-sensitivity */
 		public static final double SENS_X = 0.1;
@@ -26,9 +24,18 @@ public class Attr {
 		/** Whether the program should run with debugging features enabled */
 		public static final boolean DEBUGGING = true;
 		
-		// Player variables:
+		
+		// Block data structure constants:
+		/** Chuck size in blocks */
+		public static final int B_CHUNK_SIZE = 16;
+
+		/** Block size in OpenGL units */
+		public static final int B_SIZE = 256;
+		
+		
+		// Player constants:
 		/** Speed of player walking */
-		public static final float P_SPEED = 0.8f;
+		public static final float P_SPEED = 2;
 		
 		/** Control for walking forwards */
 		public static final int P_C_FORWARD = Keyboard.KEY_W;
