@@ -16,11 +16,13 @@ public class Player {
 	
 	public void update(int delta, Input input)
 	{
-		rotX -= input.mouseDX * Attr.SENS_X;
+		if(input.grabbed)
+			rotX -= input.mouseDX * Attr.SENS_X;
 		double radRotX = degToRad(rotX);
 		vecRotXZ = radToVec(radRotX);
 		
-		rotY += input.mouseDY * Attr.SENS_Y;
+		if(input.grabbed)
+			rotY += input.mouseDY * Attr.SENS_Y;
 		if(rotY < -89)
 			rotY = -89;
 		else if(rotY > 89)

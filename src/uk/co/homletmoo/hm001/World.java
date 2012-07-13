@@ -5,43 +5,65 @@ import static java.lang.Math.pow;
 import java.util.HashMap;
 import java.util.Map;
 
+import libnoiseforjava.exception.ExceptionInvalidParam;
+import libnoiseforjava.module.Perlin;
+import libnoiseforjava.util.NoiseMap;
+import libnoiseforjava.util.NoiseMapBuilderPlane;
+
 public class World {
 	
 	private Map<Integer, Chunk> m;
-	private int size;
+	private int sizeX, sizeZ;
+	private NoiseMap heightmap;
 	
-	public World(int size)
+	public World(int sizeX, int sizeZ)
 	{
-		this.size = size;
-		m = new HashMap<Integer, Chunk>((int) pow(size, 3));
+		try {
+			Perlin perlin = new Perlin();
+			perlin.setPersistence(0.45);
+			heightmap = new NoiseMap(sizeX * Attr.B_CHUNK_SIZE, sizeZ * Attr.B_CHUNK_SIZE);
+			NoiseMapBuilderPlane heightmapBuilder = new NoiseMapBuilderPlane();
+			heightmapBuilder.setSourceModule(perlin);
+			heightmapBuilder.setDestNoiseMap(heightmap);
+			heightmapBuilder.setDestSize(sizeX * Attr.B_CHUNK_SIZE, sizeZ * Attr.B_CHUNK_SIZE);
+			heightmapBuilder.setBounds(0, 1, 0, 1);
+			heightmapBuilder.build();
+		} catch (ExceptionInvalidParam e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		this.sizeX = sizeX;
+		this.sizeZ = sizeZ;
+		m = new HashMap<Integer, Chunk>(sizeX * sizeZ * Attr.B_WORLD_HEIGHT);
 		
-		for(int x = 0; x < size; x++)
-			for(int y = 0; y < size; y++)
-				for(int z = 0; z < size; z++)
+		for(int x = 0; x < sizeX; x++)
+			for(int y = 0; y < Attr.B_WORLD_HEIGHT; y++)
+				for(int z = 0; z < sizeZ; z++)
 				{
-					m.put(new String("" + x + y + z).hashCode(), new Chunk(x, y, z));
+					m.put(new String(x + " " + y + " " + z).hashCode(), new Chunk(x, y, z, heightmap));
 				}
 	}
 	
 	public void update(int delta, Input input)
 	{
-		for(int x = 0; x < size; x++)
-			for(int y = 0; y < size; y++)
-				for(int z = 0; z < size; z++)
+		for(int x = 0; x < sizeX; x++)
+			for(int y = 0; y < Attr.B_WORLD_HEIGHT; y++)
+				for(int z = 0; z < sizeZ; z++)
 				{
-					m.get(new String("" + x + y + z).hashCode()).update(delta, input);
+					m.get(new String(x + " " + y + " " + z).hashCode()).update(delta, input);
 				}
 	}
 	
 	public Block[] getBlocks()
 	{
-		Block[] blocks = new Block[(int) pow(size * Attr.B_CHUNK_SIZE, 3)];
+		Block[] blocks = new Block[(int) (sizeX * sizeZ * Attr.B_WORLD_HEIGHT * pow(Attr.B_CHUNK_SIZE, 3))];
 		int index = 0;
-		for(int x = 0; x < size; x++)
-			for(int y = 0; y < size; y++)
-				for(int z = 0; z < size; z++)
+		for(int x = 0; x < sizeX; x++)
+			for(int y = 0; y < Attr.B_WORLD_HEIGHT; y++)
+				for(int z = 0; z < sizeZ; z++)
 				{
-					Block[] temp = m.get(new String("" + x + y + z).hashCode()).getBlocks(); 
+					Block[] temp = m.get(new String(x + " " + y + " " + z).hashCode()).getBlocks((HashMap<Integer, Chunk>) m); 
 					for(int w = 0; w < temp.length; w++)
 						blocks[index++] = temp[w];
 				}

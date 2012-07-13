@@ -15,9 +15,9 @@ public class Block {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.r = (float) (r + rand.nextFloat() / 10 - 0.05);
-		this.g = (float) (g + rand.nextFloat() / 10 - 0.05);
-		this.b = (float) (b + rand.nextFloat() / 10 - 0.05);
+		this.r = (float) (r + rand.nextFloat() / 40 - 0.0125);
+		this.g = (float) (g + rand.nextFloat() / 40 - 0.0125);
+		this.b = (float) (b + rand.nextFloat() / 40 - 0.0125);
 		this.active = active;
 	}
 }

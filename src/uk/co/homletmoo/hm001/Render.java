@@ -55,8 +55,8 @@ public class Render {
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 			fogColor.put(0).put(0).put(0).put(1).flip();
 			
-			glFogi(GL_FOG_MODE, GL_EXP2);
-			glFogf(GL_FOG_DENSITY, 0.0002f);
+			glFogi(GL_FOG_MODE, GL_EXP);
+			glFogf(GL_FOG_DENSITY, 0.00012f);
 			glFog(GL_FOG_COLOR, fogColor);
 			glHint(GL_FOG_HINT, GL_DONT_CARE);
 	    
@@ -69,7 +69,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(75, DISPLAY_WIDTH / DISPLAY_HEIGHT, 1, SIZE);
+			gluPerspective(90, DISPLAY_WIDTH / DISPLAY_HEIGHT, 1, SIZE);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);

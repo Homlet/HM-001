@@ -15,9 +15,9 @@ public class State {
 	
 	public State()
 	{
-		w = new World(2);
+		w = new World(5, 5);
 		
-		for(int i = 0; i < 60; i++)
+		for(int i = 0; i < 0; i++)
 		{
 			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 256, 256, 256, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), null);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));

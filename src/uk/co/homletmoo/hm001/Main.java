@@ -27,7 +27,7 @@ public class Main {
 	
 	/** Vector containing all renderable objects */
 	public Vector<Renderable> stack = new Vector<Renderable>();
-	
+
 	public static void main(String[] args)
 	{
 		new Main().start();
@@ -66,14 +66,25 @@ public class Main {
 	/** Main logical loop */
 	public void loop()
 	{
-		while(!Display.isCloseRequested() && !input.keys[Keyboard.KEY_ESCAPE])
+		while(!Display.isCloseRequested() && (!input.keys[Keyboard.KEY_ESCAPE] || !input.keys[Keyboard.KEY_GRAVE]))
 		{
+			if(input.keys[Keyboard.KEY_ESCAPE] && input.hasChanged(Keyboard.KEY_ESCAPE))
+				if(input.grabbed)
+					input.ungrab();
+				else
+					input.grab();
+			
 			int delta = getDelta();
+			System.out.print(delta + " ms\n");
 			update(delta);
 			
+			System.out.print("Rendering... ");
 			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player);
-
+			System.out.print("Updating... ");
+			
 			input.pollInput();
+			if(input.grabbed)
+				input.setPos(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 			Display.update();
 			Display.sync(60);
 		}

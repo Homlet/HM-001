@@ -11,7 +11,7 @@ public class Attr {
 		/** Height of the display window */
 		public static final int DISPLAY_HEIGHT = 720;
 		/** Size of render zone */
-		public static final int SIZE = 8192;
+		public static final int SIZE = 16384;
 	
 		/** Mouse X-sensitivity */
 		public static final double SENS_X = 0.1;
@@ -28,6 +28,12 @@ public class Attr {
 		// Block data structure constants:
 		/** Chuck size in blocks */
 		public static final int B_CHUNK_SIZE = 16;
+
+		/** World height in chunks */
+		public static final int B_WORLD_HEIGHT = 1;
+
+		/** Grass level in blocks */
+		public static final int B_GRASS_LEVEL = 3;
 
 		/** Block size in OpenGL units */
 		public static final int B_SIZE = 256;
