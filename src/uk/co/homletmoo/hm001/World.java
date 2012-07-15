@@ -4,6 +4,7 @@ import static java.lang.Math.pow;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import libnoiseforjava.exception.ExceptionInvalidParam;
 import libnoiseforjava.module.Perlin;
@@ -15,12 +16,15 @@ public class World {
 	private Map<Integer, Chunk> m;
 	private int sizeX, sizeZ;
 	private NoiseMap heightmap;
+	private Random rand = new Random();
 	
 	public World(int sizeX, int sizeZ)
 	{
 		try {
 			Perlin perlin = new Perlin();
-			perlin.setPersistence(0.45);
+			perlin.setSeed(rand.nextInt());
+			perlin.setOctaveCount(16);
+			perlin.setPersistence(0.6);
 			heightmap = new NoiseMap(sizeX * Attr.B_CHUNK_SIZE, sizeZ * Attr.B_CHUNK_SIZE);
 			NoiseMapBuilderPlane heightmapBuilder = new NoiseMapBuilderPlane();
 			heightmapBuilder.setSourceModule(perlin);

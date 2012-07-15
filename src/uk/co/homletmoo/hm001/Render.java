@@ -21,7 +21,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 public class Render {
 	
 	// DEBUGGING ONLY:
-	private boolean fogFlag = true;
+	private boolean fogFlag = false;
 	private int fogToggleTimer = 30;
 	
 	public void init()
@@ -51,17 +51,17 @@ public class Render {
 		glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
-		glEnable(GL_FOG);
+		//glEnable(GL_FOG);
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-			fogColor.put(0).put(0).put(0).put(1).flip();
+			fogColor.put(0.55f).put(0.75f).put(0.9f).put(0.9f).flip();
 			
 			glFogi(GL_FOG_MODE, GL_EXP);
-			glFogf(GL_FOG_DENSITY, 0.00012f);
+			glFogf(GL_FOG_DENSITY, 0.000075f);
 			glFog(GL_FOG_COLOR, fogColor);
 			glHint(GL_FOG_HINT, GL_DONT_CARE);
 	    
-        glClearColor(0, 0, 0, 1);
-        
+			glClearColor(0.55f, 0.75f, 0.9f, 1);
+			
         glEnable(GL_POINT_SMOOTH);
 			glPointSize(2);
 		
@@ -122,11 +122,11 @@ public class Render {
 			switch(r.type)
 			{
 				case CUBE:
-					glCallList(Prim.listCube);
+					glCallList(Prim.cube);
 				break;
 				
 				case POINT:
-					glCallList(Prim.listPoint);
+					glCallList(Prim.point);
 				break;
 			}
 			
@@ -143,7 +143,26 @@ public class Render {
 				glTranslatef(blocks[m].x * B_SIZE - player.x, blocks[m].y * B_SIZE - player.y, blocks[m].z * B_SIZE - player.z);
 				glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
 				glColor3f(blocks[m].r, blocks[m].g, blocks[m].b);
-				glCallList(Prim.listCube);
+				
+				if(blocks[m].all)
+				{
+					glCallList(Prim.cube);
+				}
+				else
+				{
+					if(blocks[m].xp)
+						glCallList(Prim.qxp);
+					if(blocks[m].xn)
+						glCallList(Prim.qxn);
+					if(blocks[m].yp)
+						glCallList(Prim.qyp);
+					if(blocks[m].yn)
+						glCallList(Prim.qyn);
+					if(blocks[m].zp)
+						glCallList(Prim.qzp);
+					if(blocks[m].zn)
+						glCallList(Prim.qzn);
+				}
 			}
 		}
 

@@ -22,10 +22,10 @@ public class Input {
 		mouseX = Mouse.getX();
 		mouseY = Mouse.getY();
 		
-		mouseDX /= 1.15;
-		mouseDY /= 1.15;
-		mouseDX += (mouseX - Attr.DISPLAY_HALFWIDTH) / 8;
-		mouseDY += (mouseY - Attr.DISPLAY_HALFHEIGHT) / 8;
+		mouseDX /= 1.5;
+		mouseDY /= 1.5;
+		mouseDX += (mouseX - Attr.DISPLAY_HALFWIDTH) / 2;
+		mouseDY += (mouseY - Attr.DISPLAY_HALFHEIGHT) / 2;
 		
 		while(Mouse.next())
 			if(Mouse.getEventButton() == 0)
