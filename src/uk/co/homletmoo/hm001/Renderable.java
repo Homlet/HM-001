@@ -1,7 +1,5 @@
 package uk.co.homletmoo.hm001;
 
-import org.newdawn.slick.opengl.Texture;
-
 /** Stores data for drawing an OpenGL primitive */
 public class Renderable {
 	
@@ -10,7 +8,7 @@ public class Renderable {
 	public float width, height, depth;
 	public float offsetX, offsetY, offsetZ;
 	public float r, g, b;
-	public Texture tex;
+	public int tex;
 	
 	/**
 	 * 
@@ -24,9 +22,9 @@ public class Renderable {
 	 * @param r Red value of colour, from 0 to 1
 	 * @param g Green value of colour, from 0 to 1
 	 * @param b Blue value of colour, from 0 to 1
-	 * @param tex Texture to use from the Tex class. Set as null for no texture
+	 * @param tex Integer texture pointer to use from the Tex class. Set as 0 for no texture
 	 */
-	public Renderable(Attr.TYPE type, float x, float y, float z, float width, float height, float depth, float r, float g, float b, Texture tex)
+	public Renderable(Attr.TYPE type, float x, float y, float z, float width, float height, float depth, float r, float g, float b, int tex)
 	{
 		this.type = type;
 		this.offsetX = x;

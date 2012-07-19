@@ -11,7 +11,7 @@ public class Attr {
 		/** Height of the display window */
 		public static final int DISPLAY_HEIGHT = 900;
 		/** Size of render zone */
-		public static final int SIZE = 20000;
+		public static final int SIZE = 2048 + 1024;
 	
 		/** Mouse X-sensitivity */
 		public static final double SENS_X = 0.1;
@@ -30,21 +30,18 @@ public class Attr {
 		public static final int B_CHUNK_SIZE = 16;
 
 		/** World height in chunks */
-		public static final int B_WORLD_HEIGHT = 6;
-
-		/** Grass level in blocks */
-		public static final int B_GRASS_LEVEL = 6;
+		public static final int B_WORLD_HEIGHT = 2;
 
 		/** Snow level in blocks */
 		public static final int B_SNOW_LEVEL = 28;
 
 		/** Block size in OpenGL units */
-		public static final int B_SIZE = 256;
+		public static final int B_SIZE = 32;
 		
 		
 		// Player constants:
 		/** Speed of player walking */
-		public static final float P_SPEED = 5;
+		public static final float P_SPEED = 0.45f;
 		
 		/** Control for walking forwards */
 		public static final int P_C_FORWARD = Keyboard.KEY_W;

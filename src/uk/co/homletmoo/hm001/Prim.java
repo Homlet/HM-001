@@ -2,8 +2,6 @@ package uk.co.homletmoo.hm001;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.opengl.GL11;
-
 public class Prim {
 	
 	public static int cube;
@@ -15,10 +13,7 @@ public class Prim {
 	{
 		cube = glGenLists(1);
 		glNewList(cube, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				
+			glBegin(GL_QUADS);
 				glNormal3f(0, 1, 0);
 				glTexCoord2f(0, 1);			glVertex3f(1, 1, -1);		// Top
 				glTexCoord2f(1, 1);			glVertex3f(-1, 1, -1);
@@ -68,7 +63,7 @@ public class Prim {
 	//
 		qxp = glGenLists(1);
 		glNewList(qxp, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(1, 0, 0);			
 				glTexCoord2f(1, 1);			glVertex3f(1, -1, -1);		// Left
 				glTexCoord2f(1, 0);			glVertex3f(1, 1, -1);
@@ -79,7 +74,7 @@ public class Prim {
 		
 		qxn = glGenLists(1);
 		glNewList(qxn, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(-1, 0, 0);			
 				glTexCoord2f(1, 0);			glVertex3f(-1, 1, 1);		// Right
 				glTexCoord2f(0, 0);			glVertex3f(-1, 1, -1);
@@ -90,7 +85,7 @@ public class Prim {
 		
 		qyp = glGenLists(1);
 		glNewList(qyp, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(0, 1, 0);
 				glTexCoord2f(0, 1);			glVertex3f(1, 1, -1);		// Top
 				glTexCoord2f(1, 1);			glVertex3f(-1, 1, -1);
@@ -101,7 +96,7 @@ public class Prim {
 		
 		qyn = glGenLists(1);
 		glNewList(qyn, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(0, -1, 0);
 				glTexCoord2f(1, 1);			glVertex3f(-1, -1, 1);		// Bottom
 				glTexCoord2f(1, 0);			glVertex3f(-1, -1, -1);
@@ -112,7 +107,7 @@ public class Prim {
 		
 		qzp = glGenLists(1);
 		glNewList(qzp, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(0, 0, 1);
 				glTexCoord2f(1, 0);			glVertex3f(1, 1, 1);		// Back
 				glTexCoord2f(0, 0);			glVertex3f(-1, 1, 1);
@@ -123,7 +118,7 @@ public class Prim {
 		
 		qzn = glGenLists(1);
 		glNewList(qzn, GL_COMPILE);
-			glBegin(GL11.GL_QUADS);
+			glBegin(GL_QUADS);
 				glNormal3f(0, 0, -1);
 				glTexCoord2f(0, 1);			glVertex3f(1, -1, -1);		// Front
 				glTexCoord2f(1, 1);			glVertex3f(-1, -1, -1);

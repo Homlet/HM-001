@@ -15,11 +15,11 @@ public class State {
 	
 	public State()
 	{
-		w = new World(6, 6);
+		w = new World(2, 2);
 		
 		for(int i = 0; i < 0; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 256, 256, 256, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), Tex.logo);
+			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 256, 256, 256, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0);
 			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
 		}
 	}

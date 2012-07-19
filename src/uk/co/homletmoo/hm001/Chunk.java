@@ -27,13 +27,11 @@ public class Chunk {
 			for(int y = 0; y < blocks[x].length; y++)
 				for(int z = 0; z < blocks[x][y].length; z++)
 				{
-					if(gP(y, cy) < heightmap.getValue(gP(x, cx), gP(z, cz)) * Attr.B_WORLD_HEIGHT_BL || gP(y, cy) == 0)
+					if(gP(y, cy) <= heightmap.getValue(gP(x, cx), gP(z, cz)) * Attr.B_WORLD_HEIGHT_BL || gP(y, cy) == 0)
 						if(rand.nextFloat() > Attr.B_SNOW_LEVEL / (gP(y, cy) + 0.01f) - 0.5f)
 							blocks[x][y][z] = new Block(gP(x, cx), gP(y, cy), gP(z, cz), 0.95f, 0.95f, 0.95f, true);
-						else if(gP(y, cy) > Attr.B_GRASS_LEVEL)
-							blocks[x][y][z] = new Block(gP(x, cx), gP(y, cy), gP(z, cz), 0.1f, Math.min(0.045f * gP(y, cy), 0.45f), 0.2f, true);
 						else
-							blocks[x][y][z] = new Block(gP(x, cx), gP(y, cy), gP(z, cz), Math.min(0.045f * (gP(y, cy)), 0.1f), Math.min(0.005f * (gP(y, cy)), 0.09f), 0.45f, true);
+							blocks[x][y][z] = new Block(gP(x, cx), gP(y, cy), gP(z, cz), 0.1f, Math.min(0.045f * gP(y, cy) / 4 + 0.1f, 0.45f), 0.2f, true);
 					else
 						blocks[x][y][z] = new Block(gP(x, cx), gP(y, cy), gP(z, cz), 0, 0, 0, false);
 				}
@@ -90,8 +88,9 @@ public class Chunk {
 									|| m.get(new String(cP(x - 1, cx) + " " + cP(y, cy) + " " + cP(z, cz)).hashCode()).blocks[edgeNeg(x)][y][z].active)
 										xn = false;
 									
-									if(m.get(new String(cP(x, cx) + " " + cP(y + 1, cy) + " " + cP(z, cz)).hashCode()) == null
-									|| m.get(new String(cP(x, cx) + " " + cP(y + 1, cy) + " " + cP(z, cz)).hashCode()).blocks[x][edgePos(y)][z].active)
+									if(gP(y, cy) != Attr.B_WORLD_HEIGHT * Attr.B_CHUNK_SIZE - 1
+									&& (m.get(new String(cP(x, cx) + " " + cP(y + 1, cy) + " " + cP(z, cz)).hashCode()) == null
+									|| m.get(new String(cP(x, cx) + " " + cP(y + 1, cy) + " " + cP(z, cz)).hashCode()).blocks[x][edgePos(y)][z].active))
 										yp = false;
 									
 									if(m.get(new String(cP(x, cx) + " " + cP(y - 1, cy) + " " + cP(z, cz)).hashCode()) == null

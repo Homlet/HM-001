@@ -4,19 +4,12 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 import static uk.co.homletmoo.hm001.Attr.*;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.newdawn.slick.opengl.PNGImageData;
-import org.newdawn.slick.opengl.TextureLoader;
 
 public class Render {
 	
@@ -27,15 +20,9 @@ public class Render {
 	public void init()
 	{
 		// Load textures
-		try {
-			Tex.icon = TextureLoader.getTexture("PNG", new FileInputStream("src/res/favicon.png"));
-			Tex.logo = TextureLoader.getTexture("PNG", new FileInputStream("src/res/HMXLV2.png"));
-			Display.setIcon(assignIcon("src/res/favicon.png"));
-		} catch (Exception e) {
-			System.err.println("Textures did not load properly.");
-			Display.destroy();
-			System.exit(1);
-		}
+		glEnable(GL_TEXTURE_2D);
+			Tex.init();
+		glDisable(GL_TEXTURE_2D);
 		
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
@@ -55,8 +42,8 @@ public class Render {
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 			fogColor.put(0.55f).put(0.75f).put(0.9f).put(0.9f).flip();
 			
-			glFogi(GL_FOG_MODE, GL_EXP);
-			glFogf(GL_FOG_DENSITY, 0.000075f);
+			glFogi(GL_FOG_MODE, GL_EXP2);
+			glFogf(GL_FOG_DENSITY, 0.00075f);
 			glFog(GL_FOG_COLOR, fogColor);
 			glHint(GL_FOG_HINT, GL_DONT_CARE);
 	    
@@ -101,6 +88,7 @@ public class Render {
 			fogToggleTimer = 0;
 		}
 		
+		// Render entities
 		Iterator<Renderable> i = stack.iterator();
 		while(i.hasNext())
 		{
@@ -112,10 +100,10 @@ public class Render {
 			glScalef(r.width / 2, r.height / 2, r.depth / 2);
 			glColor3f(r.r, r.g, r.b);
         	
-			if(r.tex != null)
+			if(r.tex != 0)
 			{
 				glEnable(GL_TEXTURE_2D);
-				r.tex.bind();
+				glBindTexture(GL_TEXTURE_2D, r.tex);
 			} else
 				glDisable(GL_TEXTURE_2D);
 			
@@ -129,20 +117,24 @@ public class Render {
 					glCallList(Prim.point);
 				break;
 			}
-			
-			glDisable(GL_TEXTURE_2D);
 		}
+		glDisable(GL_TEXTURE_2D);
 		
+		// Render blocks
+
+		glEnable(GL_TEXTURE_2D);
+		int blockCount = 0;
 		for(int m = 0; m < blocks.length; m++)
 		{
 			if(blocks[m] != null)
 			{
+				blockCount++;
 				glLoadIdentity();
 				glRotatef(-player.rotY, 1, 0, 0);
 				glRotatef(-player.rotX, 0, 1, 0);
 				glTranslatef(blocks[m].x * B_SIZE - player.x, blocks[m].y * B_SIZE - player.y, blocks[m].z * B_SIZE - player.z);
 				glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
-				glColor3f(blocks[m].r, blocks[m].g, blocks[m].b);
+			//	glColor3f(blocks[m].r, blocks[m].g, blocks[m].b);
 				
 				if(blocks[m].all)
 				{
@@ -151,20 +143,46 @@ public class Render {
 				else
 				{
 					if(blocks[m].xp)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_FRONT)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_FRONT);
 						glCallList(Prim.qxp);
+					}
 					if(blocks[m].xn)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
 						glCallList(Prim.qxn);
+					}
 					if(blocks[m].yp)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_TOP_BASE)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_TOP_BASE);
 						glCallList(Prim.qyp);
+					}
 					if(blocks[m].yn)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_TOP_BASE)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_TOP_BASE);
 						glCallList(Prim.qyn);
+					}
 					if(blocks[m].zp)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
 						glCallList(Prim.qzp);
+					}
 					if(blocks[m].zn)
+					{
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
+							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
 						glCallList(Prim.qzn);
+					}
 				}
 			}
 		}
+		System.out.print("Blocks: " + blockCount + " ");
+		glDisable(GL_TEXTURE_2D);
 
 		glLoadIdentity();
 		gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
@@ -173,32 +191,5 @@ public class Render {
 	public void cleanup()
 	{
 		//TODO: cleanup method
-	}
-	
-	private ByteBuffer[] assignIcon(String path)
-	{
-		try {
-			ByteBuffer buffIcon = new PNGImageData().loadImage(new FileInputStream(path));
-			ByteBuffer[] buffIcons = new ByteBuffer[] { buffIcon };
-			return buffIcons;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			System.exit(0);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-		
-		return null;
-	}
-	
-	public static float dotVector3f(float[] v1, float[] v2)
-	{
-		return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
-	}
-	
-	public static float[] subVector3f(float[] v1, float[] v2)
-	{
-		return new float[] { v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2] };
 	}
 }

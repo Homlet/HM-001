@@ -1,2 +1,4 @@
 libnoise/*
 bin/libnoiseforjava/*
+bin/res/blocks.png
+src/res/blocks.png
