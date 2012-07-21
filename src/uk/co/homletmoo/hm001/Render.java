@@ -57,7 +57,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(90, DISPLAY_WIDTH / DISPLAY_HEIGHT, 1, RENDER_DISTANCE);
+			gluPerspective(90, 1.667f, 1, RENDER_DISTANCE);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);

@@ -11,7 +11,7 @@ import libnoiseforjava.util.NoiseMap;
 
 public class Chunk {
 	
-	private Block[][][] blocks;
+	private Block[][][] blocks, culled;
 	private Block[] cache;
 	private boolean changed = true;
 	private int cx, cy, cz;
@@ -122,23 +122,12 @@ public class Chunk {
 		
 		Block[] tmp = cache.clone();
 		
-		/* Pathetic, misunderstood, failed frustum culling method: ------------------------------------------------------------------------
 		for(int i = 0; i < tmp.length; i++)
 		{
 			if(tmp[i] != null)
 			{
-				if(frus[0][0] * (tmp[i].z * B_SIZE) + frus[0][1] * (-tmp[i].y * B_SIZE) + frus[0][2] * (tmp[i].x * B_SIZE) + frus[0][3] <= -1
-				|| frus[1][0] * (tmp[i].z * B_SIZE) + frus[1][1] * (-tmp[i].y * B_SIZE) + frus[1][2] * (tmp[i].x * B_SIZE) + frus[1][3] <= -1
-				|| frus[2][0] * (tmp[i].z * B_SIZE) + frus[2][1] * (-tmp[i].y * B_SIZE) + frus[2][2] * (tmp[i].x * B_SIZE) + frus[2][3] <= -1
-				|| frus[3][0] * (tmp[i].z * B_SIZE) + frus[3][1] * (-tmp[i].y * B_SIZE) + frus[3][2] * (tmp[i].x * B_SIZE) + frus[3][3] <= -1
-				|| frus[4][0] * (tmp[i].z * B_SIZE) + frus[4][1] * (-tmp[i].y * B_SIZE) + frus[4][2] * (tmp[i].x * B_SIZE) + frus[4][3] <= -1
-				|| frus[5][0] * (tmp[i].z * B_SIZE) + frus[5][1] * (-tmp[i].y * B_SIZE) + frus[5][2] * (tmp[i].x * B_SIZE) + frus[5][3] <= -1)
-				{
-					tmp[i] = null;
-				}
 			}
 		}
-		----------------------------------------------------------------------------------------------------------------------------------- */
 		
 		return tmp;
 	}

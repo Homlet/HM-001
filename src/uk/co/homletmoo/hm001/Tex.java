@@ -46,20 +46,40 @@ public class Tex {
 	public static void init()
 	{
 		try {
-			icon = loadTexture(16, 16, loadImage("src/res/favicon.png"));
-			logo = loadTexture(32, 32, loadImage("src/res/HMXLV2.png"));
-			Display.setIcon(assignIcon("src/res/favicon.png"));
-			
-			ByteBuffer blocks = loadImage("src/res/blocks.png");
+			if(Attr.DEBUGGING)
 			{
-				int width, height;
-				width = height = 16;
-
-				b_grass_TOP = loadSubTexture(0 * width, 0 * height, width, height, 128, blocks);
-				b_grass_SIDE = loadSubTexture(1 * width, 0 * height, width, height, 128, blocks);
-				b_dirt_ALL = loadSubTexture(2 * width, 0 * height, width, height, 128, blocks);
-				b_rocks_ALL = loadSubTexture(3 * width, 0 * height, width, height, 128, blocks);
-				b_stone_ALL = loadSubTexture(4 * width, 0 * height, width, height, 128, blocks);
+				icon = loadTexture(16, 16, loadImage("src/res/favicon.png"));
+				logo = loadTexture(32, 32, loadImage("src/res/HMXLV2.png"));
+				Display.setIcon(assignIcon("src/res/favicon.png"));
+				
+				ByteBuffer blocks = loadImage("src/res/blocks.png");
+				{
+					int width, height;
+					width = height = 16;
+	
+					b_grass_TOP = loadSubTexture(0 * width, 0 * height, width, height, 128, blocks);
+					b_grass_SIDE = loadSubTexture(1 * width, 0 * height, width, height, 128, blocks);
+					b_dirt_ALL = loadSubTexture(2 * width, 0 * height, width, height, 128, blocks);
+					b_rocks_ALL = loadSubTexture(3 * width, 0 * height, width, height, 128, blocks);
+					b_stone_ALL = loadSubTexture(4 * width, 0 * height, width, height, 128, blocks);
+				}
+			}else
+			{
+				icon = loadTexture(16, 16, loadImage("res/favicon.png"));
+				logo = loadTexture(32, 32, loadImage("res/HMXLV2.png"));
+				Display.setIcon(assignIcon("res/favicon.png"));
+				
+				ByteBuffer blocks = loadImage("res/blocks.png");
+				{
+					int width, height;
+					width = height = 16;
+	
+					b_grass_TOP = loadSubTexture(0 * width, 0 * height, width, height, 128, blocks);
+					b_grass_SIDE = loadSubTexture(1 * width, 0 * height, width, height, 128, blocks);
+					b_dirt_ALL = loadSubTexture(2 * width, 0 * height, width, height, 128, blocks);
+					b_rocks_ALL = loadSubTexture(3 * width, 0 * height, width, height, 128, blocks);
+					b_stone_ALL = loadSubTexture(4 * width, 0 * height, width, height, 128, blocks);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
