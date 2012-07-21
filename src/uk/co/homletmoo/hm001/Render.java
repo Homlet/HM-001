@@ -14,8 +14,9 @@ import org.lwjgl.input.Keyboard;
 public class Render {
 	
 	// DEBUGGING ONLY:
-	private boolean fogFlag = false;
+	private boolean fogFlag = true;
 	private int fogToggleTimer = 30;
+	private Block[] blockFreezer;
 	
 	public void init()
 	{
@@ -38,7 +39,7 @@ public class Render {
 		glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
-		//glEnable(GL_FOG);
+		glEnable(GL_FOG);
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 			fogColor.put(0.55f).put(0.75f).put(0.9f).put(0.9f).flip();
 			
@@ -56,7 +57,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(90, DISPLAY_WIDTH / DISPLAY_HEIGHT, 1, SIZE);
+			gluPerspective(90, DISPLAY_WIDTH / DISPLAY_HEIGHT, 1, RENDER_DISTANCE);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -69,10 +70,12 @@ public class Render {
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		// Toggle debugging features -------------------------
 		if(DEBUGGING && fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
 		{
 			if(fogFlag)
 			{
+				blockFreezer = blocks.clone();
 				glDisable(GL_FOG);
 				glDisable(GL_POINT_SMOOTH);
 				glPointSize(1);
@@ -88,7 +91,7 @@ public class Render {
 			fogToggleTimer = 0;
 		}
 		
-		// Render entities
+		// Render entities -----------------------------------
 		Iterator<Renderable> i = stack.iterator();
 		while(i.hasNext())
 		{
@@ -120,63 +123,123 @@ public class Render {
 		}
 		glDisable(GL_TEXTURE_2D);
 		
-		// Render blocks
-
+		// Render blocks -------------------------------------
 		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);
 		int blockCount = 0;
-		for(int m = 0; m < blocks.length; m++)
+		if(fogFlag)
 		{
-			if(blocks[m] != null)
+			for(int m = 0; m < blocks.length; m++)
 			{
-				blockCount++;
-				glLoadIdentity();
-				glRotatef(-player.rotY, 1, 0, 0);
-				glRotatef(-player.rotX, 0, 1, 0);
-				glTranslatef(blocks[m].x * B_SIZE - player.x, blocks[m].y * B_SIZE - player.y, blocks[m].z * B_SIZE - player.z);
-				glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
-			//	glColor3f(blocks[m].r, blocks[m].g, blocks[m].b);
-				
-				if(blocks[m].all)
+				if(blocks[m] != null)
 				{
-					glCallList(Prim.cube);
+					blockCount++;
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, blocks[m].y * B_SIZE - player.y, blocks[m].z * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
+					
+					if(blocks[m].all)
+					{
+						glCallList(Prim.cube);
+					}
+					else
+					{
+						if(blocks[m].xp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xp);
+							glCallList(Prim.qxp);
+						}
+						if(blocks[m].xn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xn);
+							glCallList(Prim.qxn);
+						}
+						if(blocks[m].yp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yp);
+							glCallList(Prim.qyp);
+						}
+						if(blocks[m].yn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yn);
+							glCallList(Prim.qyn);
+						}
+						if(blocks[m].zp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zp);
+							glCallList(Prim.qzp);
+						}
+						if(blocks[m].zn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zn);
+							glCallList(Prim.qzn);
+						}
+					}
 				}
-				else
+			}
+		}else
+		{
+			for(int m = 0; m < blockFreezer.length; m++)
+			{
+				if(blockFreezer[m] != null)
 				{
-					if(blocks[m].xp)
+					blockCount++;
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blockFreezer[m].x * B_SIZE - player.x, blockFreezer[m].y * B_SIZE - player.y, blockFreezer[m].z * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
+					
+					if(blockFreezer[m].all)
 					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_FRONT)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_FRONT);
-						glCallList(Prim.qxp);
+						glCallList(Prim.cube);
 					}
-					if(blocks[m].xn)
+					else
 					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
-						glCallList(Prim.qxn);
-					}
-					if(blocks[m].yp)
-					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_TOP_BASE)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_TOP_BASE);
-						glCallList(Prim.qyp);
-					}
-					if(blocks[m].yn)
-					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_TOP_BASE)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_TOP_BASE);
-						glCallList(Prim.qyn);
-					}
-					if(blocks[m].zp)
-					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
-						glCallList(Prim.qzp);
-					}
-					if(blocks[m].zn)
-					{
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.b_chest_SIDE)
-							glBindTexture(GL_TEXTURE_2D, Tex.b_chest_SIDE);
-						glCallList(Prim.qzn);
+						if(blockFreezer[m].xp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].xp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].xp);
+							glCallList(Prim.qxp);
+						}
+						if(blockFreezer[m].xn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].xn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].xn);
+							glCallList(Prim.qxn);
+						}
+						if(blockFreezer[m].yp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].yp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].yp);
+							glCallList(Prim.qyp);
+						}
+						if(blockFreezer[m].yn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].yn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].yn);
+							glCallList(Prim.qyn);
+						}
+						if(blockFreezer[m].zp)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].zp)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].zp);
+							glCallList(Prim.qzp);
+						}
+						if(blockFreezer[m].zn)
+						{
+							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].zn)
+								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].zn);
+							glCallList(Prim.qzn);
+						}
 					}
 				}
 			}

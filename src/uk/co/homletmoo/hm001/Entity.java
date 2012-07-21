@@ -1,5 +1,7 @@
 package uk.co.homletmoo.hm001;
 
+import static uk.co.homletmoo.hm001.Attr.*;
+
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
@@ -19,7 +21,7 @@ public class Entity {
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
 		rand = new Random();
-		speed = rand.nextInt(50) + 5;
+		speed = rand.nextInt(20) + 1;
 	}
 	
 	public void update(int delta, Input input)
@@ -31,14 +33,14 @@ public class Entity {
 		
 		if(z < 0)
 		{
-			z = Attr.SIZE;
-			x = rand.nextFloat() * Attr.SIZE;
-			y = rand.nextFloat() * Attr.SIZE;
-		}else if(z > Attr.SIZE)
+			z = B_SIZE * B_CHUNK_SIZE;
+			x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+			y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+		}else if(z >  B_SIZE * B_CHUNK_SIZE)
 		{
 			z = 0;
-			x = rand.nextFloat() * Attr.SIZE;
-			y = rand.nextFloat() * Attr.SIZE;
+			x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+			y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
 		}
 	}
 	

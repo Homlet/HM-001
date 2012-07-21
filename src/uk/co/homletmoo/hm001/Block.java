@@ -1,30 +1,26 @@
 package uk.co.homletmoo.hm001;
 
-import java.util.Random;
-
-public class Block {
-
+public class Block { 
+	
+	public int type;
 	public int x, y, z;
-	public float r, g, b;
 	public boolean active;
 	public boolean changed = true;
 	public boolean xp, xn, yp, yn, zp, zn;
 	public boolean all = true;
-	private Random rand = new Random();
 	
-	public Block(int x, int y, int z, float r, float g, float b, boolean active)
+	public Block(int type, int x, int y, int z, boolean active)
 	{
+		this.type = type;
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.r = (float) (r + rand.nextFloat() / 32 - 0.03125);
-		this.g = (float) (g + rand.nextFloat() / 32 - 0.03125);
-		this.b = (float) (b + rand.nextFloat() / 32 - 0.03125);
 		this.active = active;
 	}
 	
-	public void update(boolean active, boolean xp, boolean xn, boolean yp, boolean yn, boolean zp, boolean zn)
+	public void update(int type, boolean active, boolean xp, boolean xn, boolean yp, boolean yn, boolean zp, boolean zn)
 	{
+		this.type = type;
 		this.active = active;
 		this.xp = xp;
 		this.xn = xn;
@@ -36,5 +32,10 @@ public class Block {
 			all = true;
 		else
 			all = false;
+	}
+	
+	public void update()
+	{
+		
 	}
 }

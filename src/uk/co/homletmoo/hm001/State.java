@@ -1,36 +1,42 @@
 package uk.co.homletmoo.hm001;
 
+import static uk.co.homletmoo.hm001.Attr.*;
+
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
+
+import org.lwjgl.input.Keyboard;
 
 public class State {
 	
 	public Vector<Renderable> stack = new Vector<Renderable>();
 	public Block[] blocks;
-	public Player player = new Player(Attr.HALFSIZE, Attr.HALFSIZE, Attr.HALFSIZE);
+	public Player player = new Player(512, 512, 512);
 	private Vector<Entity> entities = new Vector<Entity>();
-	private Random rand = new Random();
 	private World w;
 	
-	public State()
+	public State(Random rand)
 	{
-		w = new World(2, 2);
+		w = new World(rand);
 		
 		for(int i = 0; i < 0; i++)
 		{
-			Renderable r = new Renderable(Attr.TYPE.CUBE, 0, 0, 0, 256, 256, 256, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0);
-			entities.addElement(new Entity(rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, rand.nextFloat() * Attr.SIZE, r));
+			Renderable r = new Renderable(Attr.PRIM.CUBE, 0, 0, 0, 16, 16, 16, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0);
+			entities.addElement(new Entity(rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, r));
 		}
 	}
 	
-	public void update(int delta, Input input)
+	public void update(int delta, Input input, Random rand, Player p)
 	{
+		if(input.pressed(Keyboard.KEY_F11))
+			w = new World(rand);
+		
 		stack.clear();
 		
 		player.update(delta, input);
-		w.update(delta, input);
-		blocks = w.getBlocks();
+		w.update(delta, input, rand);
+		blocks = w.getBlocks(p);
 		
 		Iterator<Entity> i = entities.iterator();
 		while(i.hasNext())

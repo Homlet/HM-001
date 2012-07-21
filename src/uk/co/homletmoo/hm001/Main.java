@@ -1,5 +1,6 @@
 package uk.co.homletmoo.hm001;
 
+import java.util.Random;
 import java.util.Vector;
 
 import org.lwjgl.LWJGLException;
@@ -27,6 +28,9 @@ public class Main {
 	
 	/** Vector containing all renderable objects */
 	public Vector<Renderable> stack = new Vector<Renderable>();
+	
+	/** Master random instance */
+	private Random rand = new Random();
 
 	public static void main(String[] args)
 	{
@@ -58,7 +62,7 @@ public class Main {
 		input = new Input();
 		input.pollInput();
 		
-		state = new State();
+		state = new State(rand);
 		
 		loop();
 	}
@@ -68,7 +72,7 @@ public class Main {
 	{
 		while(!Display.isCloseRequested() && (!input.keys[Keyboard.KEY_ESCAPE] || !input.keys[Keyboard.KEY_GRAVE]))
 		{
-			if(input.keys[Keyboard.KEY_ESCAPE] && input.hasChanged(Keyboard.KEY_ESCAPE))
+			if(input.pressed(Keyboard.KEY_ESCAPE))
 				if(input.grabbed)
 					input.ungrab();
 				else
@@ -98,7 +102,7 @@ public class Main {
 	/** Update call: calls updates for states and pan-state objects */
 	public void update(int delta)
 	{
-		state.update(delta, input);
+		state.update(delta, input, rand, state.player);
 		stack.clear();
 		stack.addAll(state.stack);
 	}

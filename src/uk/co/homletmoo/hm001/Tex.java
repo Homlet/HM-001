@@ -19,16 +19,29 @@ public class Tex {
 	/** Classic HM logo (32x32) */
 	public static int logo;
 	
-	// Block faces: ------------------------------
-		// TNT:
-		public static int b_tnt_TOP;
-		public static int b_tnt_SIDE;
-		public static int b_tnt_BASE;
-
-		// Chest:
-		public static int b_chest_TOP_BASE;
-		public static int b_chest_SIDE;
-		public static int b_chest_FRONT;
+	// Block faces: --------------------------------------------------
+		// Grass and dirt:
+		public static int b_grass_TOP;
+		public static int b_grass_SIDE;
+		public static int b_dirt_ALL;
+		
+		// Stone and rocks:
+		public static int b_rocks_ALL;
+		public static int b_stone_ALL;
+	
+	// Cube texture indexes: -----------------------------------------
+	public static Tex[] blockTextures = new Tex[Attr.TYPE_LENGTH];
+	
+	public int xp, xn, yp, yn, zp, zn;
+	public Tex(int xp, int xn, int yp, int yn, int zp, int zn)
+	{
+		this.xp = xp;
+		this.xn = xn;
+		this.yp = yp;
+		this.yn = yn;
+		this.zp = zp;
+		this.zn = zn;
+	}
 	
 	public static void init()
 	{
@@ -42,19 +55,23 @@ public class Tex {
 				int width, height;
 				width = height = 16;
 
-				b_tnt_TOP = loadSubTexture(9 * width, 0 * height, width, height, 256, blocks);
-				b_tnt_SIDE = loadSubTexture(8 * width, 0 * height, width, height, 256, blocks);
-				b_tnt_BASE = loadSubTexture(10 * width, 0 * height, width, height, 256, blocks);
-
-				b_chest_TOP_BASE = loadSubTexture(9 * width, 1 * height, width, height, 256, blocks);
-				b_chest_SIDE = loadSubTexture(10 * width, 1 * height, width, height, 256, blocks);
-				b_chest_FRONT = loadSubTexture(11 * width, 1 * height, width, height, 256, blocks);
+				b_grass_TOP = loadSubTexture(0 * width, 0 * height, width, height, 128, blocks);
+				b_grass_SIDE = loadSubTexture(1 * width, 0 * height, width, height, 128, blocks);
+				b_dirt_ALL = loadSubTexture(2 * width, 0 * height, width, height, 128, blocks);
+				b_rocks_ALL = loadSubTexture(3 * width, 0 * height, width, height, 128, blocks);
+				b_stone_ALL = loadSubTexture(4 * width, 0 * height, width, height, 128, blocks);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Display.destroy();
 			System.exit(-1);
 		}
+
+		blockTextures[Attr.TYPE_AIR + 128] = new Tex(-1, -1, -1, -1, -1, -1);
+		blockTextures[Attr.TYPE_GRASS + 128] = new Tex(b_grass_SIDE, b_grass_SIDE, b_grass_TOP, b_dirt_ALL, b_grass_SIDE, b_grass_SIDE);
+		blockTextures[Attr.TYPE_DIRT + 128] = new Tex(b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL);
+		blockTextures[Attr.TYPE_ROCKS + 128] = new Tex(b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL);
+		blockTextures[Attr.TYPE_STONE + 128] = new Tex(b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL);
 	}
 	
 	private static int loadSubTexture(int xOffset, int yOffset, int width, int height, int imageWidth, ByteBuffer imageData)

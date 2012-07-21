@@ -42,6 +42,11 @@ public class Input {
 		    keys[Keyboard.getEventKey()] = Keyboard.getEventKeyState();
 	}
 	
+	public boolean pressed(int key)
+	{
+		return keys[key] && hasChanged(key);
+	}
+	
 	public boolean hasChanged(int key)
 	{
 		return keys[key] != keysOld[key];
