@@ -35,7 +35,7 @@ public class Render {
 			
 		glEnable(GL_FOG);
 			FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-			fogColor.put(0.55f).put(0.75f).put(0.9f).put(0.9f).flip();
+			fogColor.put(0.55f).put(0.75f).put(1).put(1).flip();
 			
 			glFogi(GL_FOG_MODE, GL_EXP2);
 			glFogf(GL_FOG_DENSITY, 0.00075f);
@@ -51,7 +51,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(90, 1.667f, 1, RENDER_DISTANCE);
+			gluPerspective(90, (float) DISPLAY_WIDTH / (float) DISPLAY_HEIGHT, 1, RENDER_DISTANCE);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -117,86 +117,133 @@ public class Render {
 		glDisable(GL_TEXTURE_2D);
 		
 		// Render blocks -------------------------------------
-		glEnable(GL_TEXTURE_2D);
-		glColor3f(1, 1, 1);
-		int blockCount = 0;
-		for(int m = 0; m < blocks.length; m++)
+		int blockCount = 0, index = 0; 
+		for(int t = 1; t < Block.TYPE_LENGTH; t++)
 		{
-			if(blocks[m] != null)
+			int lastIndex = index;
+			if(t == Block.TYPE_WATER + 128)
 			{
-				blockCount++;
-				glLoadIdentity();
-				glRotatef(-player.rotY, 1, 0, 0);
-				glRotatef(-player.rotX, 0, 1, 0);
-				glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
-				glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
-				
-				if(blocks[m].all)
+				glDisable(GL_TEXTURE_2D);
+				glColor4f(0.9f, 0.9f, 1, 0.5f);
+			}
+			else
+			{
+				glEnable(GL_TEXTURE_2D);
+				glColor4f(1, 1, 1, 1);
+			}
+			
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].xp);
+			for(int m = index; m < blocks.length; m++)
+			{
+				if(blocks[m].type != t - 128
+				|| m == blocks.length - 1)
 				{
-					glCallList(Prim.cube);
+					index = m;
+					break;
 				}
-				else
+				blockCount++;
+				if(blocks[m].xp)
 				{
-					if(blocks[m].xp)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef((float) blocks[m].sz, (float) blocks[m].sy, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xp)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xp);
-						glCallList(Prim.qxp);
-					}
-					if(blocks[m].xn)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef(blocks[m].sz, (float) blocks[m].sy, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xn)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xn);
-						glCallList(Prim.qxn);
-					}
-					if(blocks[m].yp)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef(1, (float) blocks[m].sz, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yp)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yp);
-						glCallList(Prim.qyp);
-					}
-					if(blocks[m].yn)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef(1, (float) blocks[m].sz, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yn)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yn);
-						glCallList(Prim.qyn);
-					}
-					if(blocks[m].zp)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef(1, (float) blocks[m].sy, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zp)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zp);
-						glCallList(Prim.qzp);
-					}
-					if(blocks[m].zn)
-					{
-						glMatrixMode(GL_TEXTURE);
-						glLoadIdentity();
-						glScalef(1, (float) blocks[m].sy, 0);
-						glMatrixMode(GL_MODELVIEW);
-						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zn)
-							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zn);
-						glCallList(Prim.qzn);
-					}
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef((float) blocks[m].sz, (float) blocks[m].sy, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qxp);
+				}
+			}
+
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].xn);
+			for(int m = lastIndex; m < index - 1; m++)
+			{
+				if(blocks[m].xn)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef(blocks[m].sz, (float) blocks[m].sy, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qxn);
+				}
+			}
+
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].yp);
+			for(int m = lastIndex; m < index - 1; m++)
+			{
+				if(blocks[m].yp)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef(1, (float) blocks[m].sz, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qyp);
+				}
+			}
+
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].yn);
+			for(int m = lastIndex; m < index - 1; m++)
+			{
+				if(blocks[m].yn)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef(1, (float) blocks[m].sz, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qyn);
+				}
+			}
+
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].zp);
+			for(int m = lastIndex; m < index - 1; m++)
+			{
+				if(blocks[m].zp)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef(1, (float) blocks[m].sy, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qzp);
+				}
+			}
+
+			glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[t].zn);
+			for(int m = lastIndex; m < index - 1; m++)
+			{
+				if(blocks[m].zn)
+				{
+					glLoadIdentity();
+					glRotatef(-player.rotY, 1, 0, 0);
+					glRotatef(-player.rotX, 0, 1, 0);
+					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glScalef(1, (float) blocks[m].sy, 0);
+					glMatrixMode(GL_MODELVIEW);
+					glCallList(Prim.qzn);
 				}
 			}
 		}

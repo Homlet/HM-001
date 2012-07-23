@@ -2,6 +2,7 @@ package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,10 +13,10 @@ import libnoiseforjava.util.NoiseMap;
 import libnoiseforjava.util.NoiseMapBuilderPlane;
 
 public class World {
-	
+
+	public boolean changed = true;
 	private Map<Integer, Chunk> m;
 	private NoiseMap heightmap;
-	private boolean changed = true;
 	private Block[] cache;
 	
 	public World(Random rand)
@@ -34,7 +35,7 @@ public class World {
 			p.setPersistence(0.55);
 			
 			Const c = new Const();
-			c.setConstValue(0.05);
+			c.setConstValue(0.1);
 			
 			Max m = new Max(p, c);
 			
@@ -106,7 +107,6 @@ public class World {
 					}
 			
 			// Group like columns of blocks together
-			int index = 0;
 			Block column;
 			// Sorted in xyz
 			Block[][][] columns = new Block[B_WORLD_SIZEX * B_CHUNK_SIZE][B_WORLD_HEIGHT * B_CHUNK_SIZE][B_WORLD_SIZEZ * B_CHUNK_SIZE];
@@ -155,12 +155,13 @@ public class World {
 					}
 					if(column != null
 					&& column.type != Block.TYPE_AIR)
-						cache[index++] = column;
+						columns[x][column.y][z] = column;
 				}
 			
 			// Group like z-rows of blocks together
-			index = 0;
+			int index = 0;
 			Block slice;
+			Block[] temp = new Block[B_WORLD_SIZEX * B_CHUNK_SIZE * B_WORLD_HEIGHT * B_CHUNK_SIZE * B_WORLD_SIZEZ * B_CHUNK_SIZE];;
 			for(int x = 0; x < columns.length; x++)
 				for(int y = 0; y < columns[x].length; y++)
 				{
@@ -191,21 +192,32 @@ public class World {
 							} else
 							{
 								if(slice.type != Block.TYPE_AIR)
-									cache[index++] = slice;
+									temp[index++] = slice;
 								slice = columns[x][y][z];
 							}
 						} else
 						{
 							if(slice.type != Block.TYPE_AIR)
-								cache[index++] = slice;
+								temp[index++] = slice;
 							slice = new Block(Block.TYPE_AIR, x, y, z, false);
 						}
 					}
 					if(slice != null
 					&& slice.type != Block.TYPE_AIR)
-						cache[index++] = slice;
+						temp[index++] = slice;
 				}
 			
+			int capacity = 0;
+			for(int i = 0; i < temp.length; i++)
+				if(temp[i] != null)
+					capacity++;
+			cache = new Block[capacity];
+			index = 0;
+			while(capacity > 0)
+				if(temp[index++] != null)
+					cache[capacity-- - 1] = temp[capacity];
+			
+			Arrays.sort(cache);
 			changed = false;
 		}
 		

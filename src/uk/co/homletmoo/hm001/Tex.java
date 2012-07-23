@@ -1,6 +1,7 @@
 package uk.co.homletmoo.hm001;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -91,6 +92,7 @@ public class Tex {
 		blockTextures[Block.TYPE_DIRT + 128] = new Tex(b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL);
 		blockTextures[Block.TYPE_ROCKS + 128] = new Tex(b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL);
 		blockTextures[Block.TYPE_STONE + 128] = new Tex(b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL);
+		blockTextures[Block.TYPE_WATER + 128] = new Tex(0, 0, 0, 0, 0, 0);
 	}
 	
 	private static int loadSubTexture(int xOffset, int yOffset, int width, int height, int imageWidth, ByteBuffer imageData)
@@ -109,6 +111,9 @@ public class Tex {
 		glPixelStorei(GL_UNPACK_SKIP_ROWS, yOffset);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+		glGenerateMipmap(GL_TEXTURE_2D);
 		tmp.rewind();
 		return tmp.get(0);
 	}
@@ -124,6 +129,7 @@ public class Tex {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+		glGenerateMipmap(GL_TEXTURE_2D);
 		tmp.rewind();
 		return tmp.get(0);
 	}

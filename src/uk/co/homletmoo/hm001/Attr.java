@@ -7,9 +7,9 @@ public class Attr {
 	// Developer-set:
 	//
 		/** Width of the display window */
-		public static final int DISPLAY_WIDTH = 1280;
+		public static final int DISPLAY_WIDTH = 1600;
 		/** Height of the display window */
-		public static final int DISPLAY_HEIGHT = 720;
+		public static final int DISPLAY_HEIGHT = 900;
 		/** Render distance in OpenGL units */
 		public static final int RENDER_DISTANCE = 3072;
 	
@@ -36,10 +36,13 @@ public class Attr {
 		public static final int B_WORLD_SIZEX = 3;
 
 		/** World height in chunks */
-		public static final int B_WORLD_HEIGHT = 5;
+		public static final int B_WORLD_HEIGHT = 6;
 
 		/** World height in chunks */
 		public static final int B_WORLD_SIZEZ = 3;
+
+		/** Ground level in blocks */
+		public static final int B_SEA_LEVEL = 32;
 
 		/** Block size in OpenGL units */
 		public static final int B_SIZE = 32;

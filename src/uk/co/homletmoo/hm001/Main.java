@@ -90,7 +90,7 @@ public class Main {
 			if(input.grabbed)
 				input.setPos(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 			Display.update();
-			Display.sync(60);
+			//Display.sync(60);
 		}
 		
 		input.ungrab();
