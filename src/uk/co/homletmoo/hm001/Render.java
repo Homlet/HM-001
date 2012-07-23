@@ -16,7 +16,6 @@ public class Render {
 	// DEBUGGING ONLY:
 	private boolean fogFlag = true;
 	private int fogToggleTimer = 30;
-	private Block[] blockFreezer;
 	
 	public void init()
 	{
@@ -24,11 +23,6 @@ public class Render {
 		glEnable(GL_TEXTURE_2D);
 			Tex.init();
 		glDisable(GL_TEXTURE_2D);
-		
-		glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
 		
 		glEnable(GL_DEPTH_TEST);
 	    	glDepthFunc(GL_LEQUAL);
@@ -75,7 +69,6 @@ public class Render {
 		{
 			if(fogFlag)
 			{
-				blockFreezer = blocks.clone();
 				glDisable(GL_FOG);
 				glDisable(GL_POINT_SMOOTH);
 				glPointSize(1);
@@ -127,119 +120,82 @@ public class Render {
 		glEnable(GL_TEXTURE_2D);
 		glColor3f(1, 1, 1);
 		int blockCount = 0;
-		if(fogFlag)
+		for(int m = 0; m < blocks.length; m++)
 		{
-			for(int m = 0; m < blocks.length; m++)
+			if(blocks[m] != null)
 			{
-				if(blocks[m] != null)
+				blockCount++;
+				glLoadIdentity();
+				glRotatef(-player.rotY, 1, 0, 0);
+				glRotatef(-player.rotX, 0, 1, 0);
+				glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+				glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
+				
+				if(blocks[m].all)
 				{
-					blockCount++;
-					glLoadIdentity();
-					glRotatef(-player.rotY, 1, 0, 0);
-					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, blocks[m].y * B_SIZE - player.y, blocks[m].z * B_SIZE - player.z);
-					glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
-					
-					if(blocks[m].all)
-					{
-						glCallList(Prim.cube);
-					}
-					else
-					{
-						if(blocks[m].xp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xp);
-							glCallList(Prim.qxp);
-						}
-						if(blocks[m].xn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xn);
-							glCallList(Prim.qxn);
-						}
-						if(blocks[m].yp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yp);
-							glCallList(Prim.qyp);
-						}
-						if(blocks[m].yn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yn);
-							glCallList(Prim.qyn);
-						}
-						if(blocks[m].zp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zp);
-							glCallList(Prim.qzp);
-						}
-						if(blocks[m].zn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zn);
-							glCallList(Prim.qzn);
-						}
-					}
+					glCallList(Prim.cube);
 				}
-			}
-		}else
-		{
-			for(int m = 0; m < blockFreezer.length; m++)
-			{
-				if(blockFreezer[m] != null)
+				else
 				{
-					blockCount++;
-					glLoadIdentity();
-					glRotatef(-player.rotY, 1, 0, 0);
-					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blockFreezer[m].x * B_SIZE - player.x, blockFreezer[m].y * B_SIZE - player.y, blockFreezer[m].z * B_SIZE - player.z);
-					glScalef(B_SIZE / 2, B_SIZE / 2, B_SIZE / 2);
-					
-					if(blockFreezer[m].all)
+					if(blocks[m].xp)
 					{
-						glCallList(Prim.cube);
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef((float) blocks[m].sz, (float) blocks[m].sy, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xp)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xp);
+						glCallList(Prim.qxp);
 					}
-					else
+					if(blocks[m].xn)
 					{
-						if(blockFreezer[m].xp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].xp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].xp);
-							glCallList(Prim.qxp);
-						}
-						if(blockFreezer[m].xn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].xn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].xn);
-							glCallList(Prim.qxn);
-						}
-						if(blockFreezer[m].yp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].yp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].yp);
-							glCallList(Prim.qyp);
-						}
-						if(blockFreezer[m].yn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].yn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].yn);
-							glCallList(Prim.qyn);
-						}
-						if(blockFreezer[m].zp)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].zp)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].zp);
-							glCallList(Prim.qzp);
-						}
-						if(blockFreezer[m].zn)
-						{
-							if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blockFreezer[m].type + 128].zn)
-								glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blockFreezer[m].type + 128].zn);
-							glCallList(Prim.qzn);
-						}
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef(blocks[m].sz, (float) blocks[m].sy, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].xn)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].xn);
+						glCallList(Prim.qxn);
+					}
+					if(blocks[m].yp)
+					{
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef(1, (float) blocks[m].sz, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yp)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yp);
+						glCallList(Prim.qyp);
+					}
+					if(blocks[m].yn)
+					{
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef(1, (float) blocks[m].sz, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].yn)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].yn);
+						glCallList(Prim.qyn);
+					}
+					if(blocks[m].zp)
+					{
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef(1, (float) blocks[m].sy, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zp)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zp);
+						glCallList(Prim.qzp);
+					}
+					if(blocks[m].zn)
+					{
+						glMatrixMode(GL_TEXTURE);
+						glLoadIdentity();
+						glScalef(1, (float) blocks[m].sy, 0);
+						glMatrixMode(GL_MODELVIEW);
+						if(glGetInteger(GL_TEXTURE_BINDING_2D) != Tex.blockTextures[blocks[m].type + 128].zn)
+							glBindTexture(GL_TEXTURE_2D, Tex.blockTextures[blocks[m].type + 128].zn);
+						glCallList(Prim.qzn);
 					}
 				}
 			}

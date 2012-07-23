@@ -7,9 +7,9 @@ public class Attr {
 	// Developer-set:
 	//
 		/** Width of the display window */
-		public static final int DISPLAY_WIDTH = 1600;
+		public static final int DISPLAY_WIDTH = 1280;
 		/** Height of the display window */
-		public static final int DISPLAY_HEIGHT = 900;
+		public static final int DISPLAY_HEIGHT = 720;
 		/** Render distance in OpenGL units */
 		public static final int RENDER_DISTANCE = 3072;
 	
@@ -30,30 +30,19 @@ public class Attr {
 		
 		// Block data structure constants:
 		/** Chuck size in blocks */
-		public static final int B_CHUNK_SIZE = 8;
+		public static final int B_CHUNK_SIZE = 16;
 
 		/** World height in chunks */
-		public static final int B_WORLD_SIZEX = 5;
+		public static final int B_WORLD_SIZEX = 3;
 
 		/** World height in chunks */
-		public static final int B_WORLD_HEIGHT = 3;
+		public static final int B_WORLD_HEIGHT = 5;
 
 		/** World height in chunks */
-		public static final int B_WORLD_SIZEZ = 5;
-
-		/** Snow level in blocks */
-		public static final int B_SNOW_LEVEL = 28;
+		public static final int B_WORLD_SIZEZ = 3;
 
 		/** Block size in OpenGL units */
 		public static final int B_SIZE = 32;
-		
-		// List of block types:
-		public static int TYPE_LENGTH = 5;
-		public static final byte TYPE_AIR = -128;
-		public static final byte TYPE_GRASS = -127;
-		public static final byte TYPE_DIRT = -126;
-		public static final byte TYPE_ROCKS = -125;
-		public static final byte TYPE_STONE = -124;
 		
 		
 		// Player constants:

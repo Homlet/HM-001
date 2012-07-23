@@ -30,7 +30,7 @@ public class Tex {
 		public static int b_stone_ALL;
 	
 	// Cube texture indexes: -----------------------------------------
-	public static Tex[] blockTextures = new Tex[Attr.TYPE_LENGTH];
+	public static Tex[] blockTextures = new Tex[Block.TYPE_LENGTH];
 	
 	public int xp, xn, yp, yn, zp, zn;
 	public Tex(int xp, int xn, int yp, int yn, int zp, int zn)
@@ -87,11 +87,10 @@ public class Tex {
 			System.exit(-1);
 		}
 
-		blockTextures[Attr.TYPE_AIR + 128] = new Tex(-1, -1, -1, -1, -1, -1);
-		blockTextures[Attr.TYPE_GRASS + 128] = new Tex(b_grass_SIDE, b_grass_SIDE, b_grass_TOP, b_dirt_ALL, b_grass_SIDE, b_grass_SIDE);
-		blockTextures[Attr.TYPE_DIRT + 128] = new Tex(b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL);
-		blockTextures[Attr.TYPE_ROCKS + 128] = new Tex(b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL);
-		blockTextures[Attr.TYPE_STONE + 128] = new Tex(b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL);
+		blockTextures[Block.TYPE_GRASS + 128] = new Tex(b_grass_SIDE, b_grass_SIDE, b_grass_TOP, b_dirt_ALL, b_grass_SIDE, b_grass_SIDE);
+		blockTextures[Block.TYPE_DIRT + 128] = new Tex(b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL, b_dirt_ALL);
+		blockTextures[Block.TYPE_ROCKS + 128] = new Tex(b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL, b_rocks_ALL);
+		blockTextures[Block.TYPE_STONE + 128] = new Tex(b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL, b_stone_ALL);
 	}
 	
 	private static int loadSubTexture(int xOffset, int yOffset, int width, int height, int imageWidth, ByteBuffer imageData)
@@ -103,6 +102,8 @@ public class Tex {
 		glBindTexture(GL_TEXTURE_2D, tmp.get(0));
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, imageWidth);
 		glPixelStorei(GL_UNPACK_SKIP_PIXELS, xOffset);
 		glPixelStorei(GL_UNPACK_SKIP_ROWS, yOffset);
@@ -120,6 +121,8 @@ public class Tex {
 		glBindTexture(GL_TEXTURE_2D, tmp.get(0));
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 		tmp.rewind();
 		return tmp.get(0);

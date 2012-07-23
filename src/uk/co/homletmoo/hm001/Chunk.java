@@ -1,7 +1,6 @@
 package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
-import static java.lang.Math.pow;
 import static java.lang.Math.floor;
 
 import java.util.HashMap;
@@ -11,8 +10,9 @@ import libnoiseforjava.util.NoiseMap;
 
 public class Chunk {
 	
+	// Note, blocks are stored in xyz format in blocks, and xzy format in culled
+	// y is up
 	private Block[][][] blocks, culled;
-	private Block[] cache;
 	private boolean changed = true;
 	private int cx, cy, cz;
 	
@@ -22,21 +22,24 @@ public class Chunk {
 		this.cy = cy;
 		this.cz = cz;
 		
-		cache = new Block[(int) pow(B_CHUNK_SIZE, 3)];
+		culled = new Block[B_CHUNK_SIZE][B_CHUNK_SIZE][B_CHUNK_SIZE];
 		blocks = new Block[B_CHUNK_SIZE][B_CHUNK_SIZE][B_CHUNK_SIZE];
 		for(int x = 0; x < blocks.length; x++)
 			for(int y = 0; y < blocks[x].length; y++)
 				for(int z = 0; z < blocks[x][y].length; z++)
 				{
-					if(gP(y, cy) == floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4 * 3.5f))
-						blocks[x][y][z] = new Block(Attr.TYPE_GRASS, gP(x, cx), gP(y, cy), gP(z, cz), true);
-					else if(gP(y, cy) < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4 * 3.5f)
-					&& gP(y, cy) >= floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 2))
-						blocks[x][y][z] = new Block(Attr.TYPE_DIRT, gP(x, cx), gP(y, cy), gP(z, cz), true);
-					else if(gP(y, cy) < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 2) || gP(y, cy) == 0)
-						blocks[x][y][z] = new Block(Attr.TYPE_STONE, gP(x, cx), gP(y, cy), gP(z, cz), true);
+					if(gP(y, cy) == floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 2))
+						blocks[x][y][z] = new Block(Block.TYPE_GRASS, gP(x, cx), gP(y, cy), gP(z, cz), true);
+					
+					else if(gP(y, cy) < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 2)
+						&& gP(y, cy) >= floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 3.5))
+						blocks[x][y][z] = new Block(Block.TYPE_DIRT, gP(x, cx), gP(y, cy), gP(z, cz), true);
+					
+					else if(gP(y, cy) < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 3.5) || gP(y, cy) == 0)
+						blocks[x][y][z] = new Block(Block.TYPE_STONE, gP(x, cx), gP(y, cy), gP(z, cz), true);
+					
 					else
-						blocks[x][y][z] = new Block(Attr.TYPE_AIR, gP(x, cx), gP(y, cy), gP(z, cz), false);
+						blocks[x][y][z] = new Block(Block.TYPE_AIR, gP(x, cx), gP(y, cy), gP(z, cz), false);
 				}
 	}
 	
@@ -44,11 +47,10 @@ public class Chunk {
 	{
 	}
 	
-	public Block[] rebuild(HashMap<Integer, Chunk> m, Player p, float[][] frus)
+	public Block[][][] rebuild(HashMap<Integer, Chunk> m, Player p)
 	{
 		if(changed)
 		{
-			int index = 0;
 			for(int x = 0; x < blocks.length; x++)
 				for(int y = 0; y < blocks[x].length; y++)
 					for(int z = 0; z < blocks[x][y].length; z++)
@@ -68,17 +70,17 @@ public class Chunk {
 									&& blocks[x][y][z + 1].active
 									&& blocks[x][y][z - 1].active)
 									{
-										cache[index++] = null;
+										culled[x][z][y] = null;
 									} else
 									{
-										blocks[x][y][z].update(blocks[x][y][z].type, true,
+										blocks[x][y][z].visibility(true,
 																!blocks[x + 1][y][z].active,
 																!blocks[x - 1][y][z].active,
 																!blocks[x][y + 1][z].active,
 																!blocks[x][y - 1][z].active,
 																!blocks[x][y][z + 1].active,
 																!blocks[x][y][z - 1].active);
-										cache[index++] = blocks[x][y][z];
+										culled[x][z][y] = blocks[x][y][z];
 									}
 								} else
 								{
@@ -108,28 +110,20 @@ public class Chunk {
 									|| m.get(new String(cP(x, cx) + " " + cP(y, cy) + " " + cP(z - 1, cz)).hashCode()).blocks[x][y][edgeNeg(z)].active)
 										zn = false;
 									
-									blocks[x][y][z].update(blocks[x][y][z].type, true, xp, xn, yp, yn, zp, zn);
-									cache[index++] = blocks[x][y][z];
+									blocks[x][y][z].visibility(true, xp, xn, yp, yn, zp, zn);
+									culled[x][z][y] = blocks[x][y][z];
 								}
 							} else
-								cache[index++] = null;
+								culled[x][z][y] = null;
 							
 							blocks[x][y][z].changed = false;
 						}
 					}
+
 			changed = false;
 		}
 		
-		Block[] tmp = cache.clone();
-		
-		for(int i = 0; i < tmp.length; i++)
-		{
-			if(tmp[i] != null)
-			{
-			}
-		}
-		
-		return tmp;
+		return culled;
 	}
 	
 	private int gP(int p, int cp)
