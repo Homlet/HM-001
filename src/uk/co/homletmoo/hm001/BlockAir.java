@@ -2,8 +2,8 @@ package uk.co.homletmoo.hm001;
 
 public class BlockAir extends Block {
 
-	public BlockAir(int x, int y, int z)
+	public BlockAir(Point p)
 	{
-		super(Block.TYPE_AIR, x, y, z, false);
+		super(Block.TYPE_AIR, p, false);
 	}
 }

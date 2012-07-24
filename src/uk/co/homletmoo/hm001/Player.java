@@ -2,20 +2,28 @@ package uk.co.homletmoo.hm001;
 
 public class Player {
 	
-	public float x, y, z;
+	public Point p;
+	public Point v;
+	public Point a;
 	public float rotX, rotY;
 	public double[] vecRotXZ;
 	public double[] vecRotY;
+	public AABB aabb;
 	
-	public Player(float x, float y, float z)
+	public Player(Point p)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.p = p;
+		a = new Point(0, 0, 0);
+		v = new Point(0, 0, 0);
+		aabb = new AABB(new Point(p.x - 32, p.y - 128, p.z - 32), new Point(p.x + 32, p.y, p.z + 32));
 	}
 	
-	public void update(int delta, Input input)
+	public void update(int delta, Input input, World w)
 	{
+		aabb = new AABB(new Point(p.x - 32, p.y - 128, p.z - 32), new Point(p.x + 32, p.y, p.z + 32));
+		
+		v.zero();
+			
 		if(input.grabbed)
 			rotX -= input.mouseDX * Attr.SENS_X;
 		double radRotX = degToRad(rotX);
@@ -32,30 +40,52 @@ public class Player {
 		
 		if(input.keys[Attr.P_C_FORWARD])
 		{
-			x -= vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED * delta;
-			z -= vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED * delta;
-			y += vecRotY[0] * Attr.P_SPEED * delta;
+			v.x = (float) -vecRotXZ[0] * Attr.P_SPEED * delta;
+			v.z = (float) -vecRotXZ[1] * Attr.P_SPEED * delta;
 		}
 		if(input.keys[Attr.P_C_BACKWARD])
 		{
-			x += vecRotXZ[0] * vecRotY[1] * Attr.P_SPEED * delta;
-			z += vecRotXZ[1] * vecRotY[1] * Attr.P_SPEED * delta;
-			y -= vecRotY[0] * Attr.P_SPEED * delta;
+			v.x = (float) vecRotXZ[0] * Attr.P_SPEED * delta;
+			v.z = (float) vecRotXZ[1] * Attr.P_SPEED * delta;
 		}
 		if(input.keys[Attr.P_C_LEFT])
 		{
-			x -= vecRotXZ[1] * Attr.P_SPEED * delta;
-			z += vecRotXZ[0] * Attr.P_SPEED * delta;
+			v.x = (float) -vecRotXZ[1] * Attr.P_SPEED * delta;
+			v.z = (float) vecRotXZ[0] * Attr.P_SPEED * delta;
 		}
 		if(input.keys[Attr.P_C_RIGHT])
 		{
-			x += vecRotXZ[1] * Attr.P_SPEED * delta;
-			z -= vecRotXZ[0] * Attr.P_SPEED * delta;
+			v.x = (float) vecRotXZ[1] * Attr.P_SPEED * delta;
+			v.z = (float) -vecRotXZ[0] * Attr.P_SPEED * delta;
 		}
-		if(input.keys[Attr.P_C_JUMP])
-			y += Attr.P_SPEED * delta;
-		if(input.keys[Attr.P_C_CROUCH])
-			y -= Attr.P_SPEED * delta;
+		
+		if(a.y >= -Attr.P_MAX_SPEEDY)
+		{
+			a.y -= Attr.GRAV;
+		}
+		else
+		{
+			a.y = -Attr.P_MAX_SPEEDY;
+		}
+
+		if(w.collide(aabb))
+		{
+			if(a.y < -Attr.GRAV)
+				p.y = (float) Math.floor(p.y / Attr.B_SIZE) * Attr.B_SIZE + 128;
+			v.y = 0;
+			a.y = 0;
+		}
+		
+		if(input.pressed(Attr.P_C_JUMP))
+		{
+			a.y = 2 * Attr.P_SPEED * delta;
+		}
+		
+		v.y += a.y;
+
+		p.x += v.x;
+		p.y += v.y;
+		p.z += v.z;
 	}
 	
 	private double degToRad(double degrees)

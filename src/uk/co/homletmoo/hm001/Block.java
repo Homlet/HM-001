@@ -1,9 +1,9 @@
 package uk.co.homletmoo.hm001;
 
-public class Block implements Comparable<Block> {
+public class Block extends AABB implements Comparable<Block> {
 	
 	// List of block types:
-	public static int TYPE_LENGTH = 6;
+	public static final int TYPE_LENGTH = 6;
 	public static final byte TYPE_AIR = -128;
 	public static final byte TYPE_GRASS = -127;
 	public static final byte TYPE_DIRT = -126;
@@ -12,19 +12,20 @@ public class Block implements Comparable<Block> {
 	public static final byte TYPE_WATER = -123;
 	
 	public int type;
-	public int x, y, z;
+	public Point p;
 	public int sy, sz;
 	public boolean active;
 	public boolean changed = true;
 	public boolean xp, xn, yp, yn, zp, zn;
 	public boolean transparent = false;
 	
-	public Block(int type, int x, int y, int z, boolean active)
+	private boolean scaling;
+	
+	public Block(int type, Point p, boolean active)
 	{
+		super(new Point(p.x, p.y, p.z), new Point(p.x + 1, p.y + 1, p.z + 1));
 		this.type = type;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.p = p;
 		this.sy = 1;
 		this.sz = 1;
 		this.active = active;
@@ -39,6 +40,23 @@ public class Block implements Comparable<Block> {
 		this.yn = yn;
 		this.zp = zp;
 		this.zn = zn;
+	}
+	
+	public void startScale()
+	{
+		this.sy = 1;
+		this.sz = 1;
+		scaling = true;
+	}
+	
+	public void endScale()
+	{
+		scaling = false;
+	}
+	
+	public boolean scaling()
+	{
+		return scaling;
 	}
 	
 	public void update()

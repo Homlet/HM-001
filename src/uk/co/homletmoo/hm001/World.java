@@ -1,6 +1,8 @@
 package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
+import static java.lang.Math.floor;
+import static java.lang.Math.abs;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,7 +109,7 @@ public class World {
 					}
 			
 			// Group like columns of blocks together
-			Block column;
+			Block column = null;
 			// Sorted in xyz
 			Block[][][] columns = new Block[B_WORLD_SIZEX * B_CHUNK_SIZE][B_WORLD_HEIGHT * B_CHUNK_SIZE][B_WORLD_SIZEZ * B_CHUNK_SIZE];
 			for(int x = 0; x < blocks.length; x++)
@@ -115,7 +117,9 @@ public class World {
 				{
 					column = blocks[x][z][0];
 					if(column == null)
-						column = new Block(Block.TYPE_AIR, x, 0, z, false);
+						column = new Block(Block.TYPE_AIR, new Point(x, 0, z), false);
+					if(!column.scaling())
+						column.startScale();
 					for(int y = 1; y < blocks[x][z].length; y++)
 					{
 						if(blocks[x][z][y] != null)
@@ -138,25 +142,33 @@ public class World {
 									column.zn = true;
 							} else
 							{
+								column.endScale();
 								if(column.type != Block.TYPE_AIR)
-									columns[x][column.y][z] = column;
+									columns[x][(int) column.p.y][z] = column;
 								else
-									columns[x][column.y][z] = null;
+									columns[x][(int) column.p.y][z] = null;
 								column = blocks[x][z][y];
+								column.startScale();
 							}
 						} else
 						{
+							column.endScale();
 							if(column.type != Block.TYPE_AIR)
-								columns[x][column.y][z] = column;
+								columns[x][(int) column.p.y][z] = column;
 							else
-								columns[x][column.y][z] = null;
-							column = new Block(Block.TYPE_AIR, x, y, z, false);
+								columns[x][(int) column.p.y][z] = null;
+							column = new Block(Block.TYPE_AIR, new Point(x, y, z), false);
+							column.startScale();
 						}
 					}
+					column.endScale();
 					if(column != null
 					&& column.type != Block.TYPE_AIR)
-						columns[x][column.y][z] = column;
+						columns[x][(int) (int) column.p.y][z] = column;
+					column.startScale();
 				}
+			if(column != null)
+				column.endScale();
 			
 			// Group like z-rows of blocks together
 			int index = 0;
@@ -167,7 +179,7 @@ public class World {
 				{
 					slice = columns[x][y][0];
 					if(slice == null)
-						slice = new Block(Block.TYPE_AIR, x, y, 0, false);
+						slice = new Block(Block.TYPE_AIR, new Point(x, y, 0), false);
 					for(int z = 1; z < columns[x][y].length; z++)
 					{
 						if(columns[x][y][z] != null)
@@ -199,7 +211,7 @@ public class World {
 						{
 							if(slice.type != Block.TYPE_AIR)
 								temp[index++] = slice;
-							slice = new Block(Block.TYPE_AIR, x, y, z, false);
+							slice = new Block(Block.TYPE_AIR, new Point(x, y, z), false);
 						}
 					}
 					if(slice != null
@@ -222,5 +234,34 @@ public class World {
 		}
 		
 		return cache;
+	}
+	
+	public boolean collide(AABB box)
+	{
+		AABB gridBox = new AABB(new Point(box.p1.x / B_SIZE, box.p1.y / B_SIZE, box.p1.z / B_SIZE), new Point(box.p2.x / B_SIZE, box.p2.y / B_SIZE, box.p2.z / B_SIZE));
+		Point centre = new Point((gridBox.p1.x + gridBox.p2.x) / 2, (gridBox.p1.y + gridBox.p2.y) / 2, (gridBox.p1.z + gridBox.p2.z) / 2);
+		
+		Point[] pa = chunkFromPoint(new Point(centre.x, centre.y, centre.z));
+		Point cp = pa[0];
+		Point bp = pa[1];
+		if(m.get(((int) cp.x + " " + (int) cp.y + " " + (int) cp.z).hashCode()) != null
+		&& m.get(((int) cp.x + " " + (int) cp.y + " " + (int) cp.z).hashCode()).getBlocks()[(int) bp.x][(int) bp.y][(int) bp.z].active)
+			return true;
+		
+		return false;
+	}
+	
+	private Point[] chunkFromPoint(Point p)
+	{
+		int cx = (int) floor(p.x / B_CHUNK_SIZE);
+		int cy = (int) floor(p.y / B_CHUNK_SIZE);
+		int cz = (int) floor(p.z / B_CHUNK_SIZE);
+		int bx = (int) abs(p.x % B_CHUNK_SIZE);
+		int by = (int) abs(p.y % B_CHUNK_SIZE);
+		int bz = (int) abs(p.z % B_CHUNK_SIZE);
+		Point cp = new Point(cx, cy, cz);
+		Point bp = new Point(bx, by, bz);
+		Point[] pa = new Point[] { cp, bp };
+		return pa;
 	}
 }

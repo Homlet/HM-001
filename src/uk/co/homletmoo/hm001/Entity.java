@@ -8,16 +8,20 @@ import java.util.Vector;
 
 public class Entity {
 	
-	private float x, y, z;
+	private Point p;
 	private Vector<Renderable> graphics;
 	private Random rand;
 	private int speed;
+	private AABB aabb;
 	
-	public Entity(float x, float y, float z, Renderable graphic)
+	public Entity(Point p, Renderable graphic)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
+
+		this.p = p;
+		float sx = graphic.width / 2;
+		float sy = graphic.height / 2;
+		float sz = graphic.depth / 2;
+		aabb = new AABB(new Point(p.x - sx, p.y - sy, p.z - sz), new Point(p.x + sx, p.y + sy, p.z + sz));
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
 		rand = new Random();
@@ -27,20 +31,20 @@ public class Entity {
 	public void update(int delta, Input input)
 	{
 		if(input.mouseLeft)
-			z -= speed;
+			p.z -= speed;
 		else if(input.mouseRight)
-			z += speed;
+			p.z += speed;
 		
-		if(z < 0)
+		if(p.z < 0)
 		{
-			z = B_SIZE * B_CHUNK_SIZE;
-			x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
-			y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
-		}else if(z >  B_SIZE * B_CHUNK_SIZE)
+			p.z = B_SIZE * B_CHUNK_SIZE;
+			p.x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+			p.y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+		}else if(p.z >  B_SIZE * B_CHUNK_SIZE)
 		{
-			z = 0;
-			x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
-			y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+			p.z = 0;
+			p.x = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
+			p.y = rand.nextFloat() * B_SIZE * B_CHUNK_SIZE;
 		}
 	}
 	
@@ -50,9 +54,9 @@ public class Entity {
 		while(i.hasNext())
 		{
 			Renderable r = i.next();
-			r.x = r.offsetX + x;
-			r.y = r.offsetY + y;
-			r.z = r.offsetZ + z;
+			r.x = r.offsetX + p.x;
+			r.y = r.offsetY + p.y;
+			r.z = r.offsetZ + p.z;
 		}
 		
 		stack.addAll(graphics);

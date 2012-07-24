@@ -83,14 +83,13 @@ public class Main {
 			update(delta);
 			
 			System.out.print("Rendering... ");
-			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player);
+			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player, rand);
 			System.out.print("Updating... ");
 			
 			input.pollInput();
 			if(input.grabbed)
 				input.setPos(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 			Display.update();
-			//Display.sync(60);
 		}
 		
 		input.ungrab();

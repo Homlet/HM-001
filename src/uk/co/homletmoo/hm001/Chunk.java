@@ -29,22 +29,27 @@ public class Chunk {
 				for(int z = 0; z < blocks[x][y].length; z++)
 				{
 					if(gP(y, cy) - B_SEA_LEVEL == floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4))
-						blocks[x][y][z] = new Block(Block.TYPE_GRASS, gP(x, cx), gP(y, cy), gP(z, cz), true);
+						blocks[x][y][z] = new Block(Block.TYPE_GRASS, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
 					
 					else if(gP(y, cy) - B_SEA_LEVEL < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4)
 						&& gP(y, cy) - B_SEA_LEVEL >= floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 16))
-						blocks[x][y][z] = new Block(Block.TYPE_DIRT, gP(x, cx), gP(y, cy), gP(z, cz), true);
+						blocks[x][y][z] = new Block(Block.TYPE_DIRT, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
 					
 					else if(gP(y, cy) - B_SEA_LEVEL < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 16) || gP(y, cy) == 0)
-						blocks[x][y][z] = new Block(Block.TYPE_STONE, gP(x, cx), gP(y, cy), gP(z, cz), true);
+						blocks[x][y][z] = new Block(Block.TYPE_STONE, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
 					
 					else
-						blocks[x][y][z] = new BlockAir(gP(x, cx), gP(y, cy), gP(z, cz));
+						blocks[x][y][z] = new BlockAir(new Point(gP(x, cx), gP(y, cy), gP(z, cz)));
 				}
 	}
 	
 	public void update(int delta, Input input, Random rand)
 	{
+	}
+	
+	public Block[][][] getBlocks()
+	{
+		return blocks;
 	}
 	
 	public Block[][][] rebuild(HashMap<Integer, Chunk> m, Player p)

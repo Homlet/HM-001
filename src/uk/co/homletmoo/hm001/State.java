@@ -12,7 +12,7 @@ public class State {
 	
 	public Vector<Renderable> stack = new Vector<Renderable>();
 	public Block[] blocks;
-	public Player player = new Player(512, 512, 512);
+	public Player player = new Player(new Point(0, 2048, 0));
 	private Vector<Entity> entities = new Vector<Entity>();
 	private World w;
 	
@@ -23,7 +23,7 @@ public class State {
 		for(int i = 0; i < 0; i++)
 		{
 			Renderable r = new Renderable(Attr.PRIM.CUBE, 0, 0, 0, 16, 16, 16, rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0);
-			entities.addElement(new Entity(rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, r));
+			entities.addElement(new Entity(new Point(rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE, rand.nextFloat() * B_SIZE * B_CHUNK_SIZE), r));
 		}
 	}
 	
@@ -34,7 +34,7 @@ public class State {
 		
 		stack.clear();
 		
-		player.update(delta, input);
+		player.update(delta, input, w);
 		w.update(delta, input, rand);
 		blocks = w.getBlocks(p);
 		

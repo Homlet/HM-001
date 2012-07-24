@@ -17,6 +17,9 @@ public class Attr {
 		public static final double SENS_X = 0.1;
 		/** Mouse Y-sensitivity */
 		public static final double SENS_Y = 0.15;
+
+		/** Gravity */
+		public static final float GRAV = 0.3f;
 		
 		/** Enumeration of renderable primitive types */
 		public static enum PRIM {
@@ -39,7 +42,7 @@ public class Attr {
 		public static final int B_WORLD_HEIGHT = 6;
 
 		/** World height in chunks */
-		public static final int B_WORLD_SIZEZ = 3;
+		public static final int B_WORLD_SIZEZ = 4;
 
 		/** Ground level in blocks */
 		public static final int B_SEA_LEVEL = 32;
@@ -51,6 +54,9 @@ public class Attr {
 		// Player constants:
 		/** Speed of player walking */
 		public static final float P_SPEED = 0.45f;
+		
+		/** Maximum falling speed */
+		public static final float P_MAX_SPEEDY = 16;
 		
 		/** Control for walking forwards */
 		public static final int P_C_FORWARD = Keyboard.KEY_W;

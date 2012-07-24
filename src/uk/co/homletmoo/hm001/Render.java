@@ -6,6 +6,7 @@ import static uk.co.homletmoo.hm001.Attr.*;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
@@ -60,7 +61,7 @@ public class Render {
 			glScissor(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	}
 
-	public void render(int time, Vector<Renderable> stack, Block[] blocks, Input input, Player player)
+	public void render(int time, Vector<Renderable> stack, Block[] blocks, Input input, Player player, Random rand)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -92,7 +93,7 @@ public class Render {
 			glLoadIdentity();
 			glRotatef(-player.rotY, 1, 0, 0);
 			glRotatef(-player.rotX, 0, 1, 0);
-			glTranslatef(r.x - player.x, r.y - player.y, r.z - player.z);
+			glTranslatef(r.x - player.p.x, r.y - player.p.y, r.z - player.p.z);
 			glScalef(r.width / 2, r.height / 2, r.depth / 2);
 			glColor3f(r.r, r.g, r.b);
         	
@@ -117,7 +118,7 @@ public class Render {
 		glDisable(GL_TEXTURE_2D);
 		
 		// Render blocks -------------------------------------
-		int blockCount = 0, index = 0; 
+		int blockCount = 0, index = 0;
 		for(int t = 1; t < Block.TYPE_LENGTH; t++)
 		{
 			int lastIndex = index;
@@ -147,7 +148,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -165,7 +166,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -183,7 +184,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -201,7 +202,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -219,7 +220,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -237,7 +238,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].x * B_SIZE - player.x, (blocks[m].y + 0.5f * blocks[m].sy) * B_SIZE - player.y, (blocks[m].z + 0.5f * blocks[m].sz) * B_SIZE - player.z);
+					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
