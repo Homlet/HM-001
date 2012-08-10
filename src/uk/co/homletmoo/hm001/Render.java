@@ -15,7 +15,7 @@ import org.lwjgl.input.Keyboard;
 public class Render {
 	
 	// DEBUGGING ONLY:
-	private boolean fogFlag = true;
+	private boolean fogFlag = false;
 	private int fogToggleTimer = 30;
 	
 	public void init()
@@ -48,6 +48,8 @@ public class Render {
         glEnable(GL_POINT_SMOOTH);
 			glPointSize(2);
 		
+		glLineWidth(2.5f);
+		
 		Prim.initLists();
 
 		glMatrixMode(GL_PROJECTION);
@@ -65,18 +67,24 @@ public class Render {
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		
+		
 		// Toggle debugging features -------------------------
 		if(DEBUGGING && fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
 		{
 			if(fogFlag)
 			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 				glDisable(GL_FOG);
+				glDisable(GL_CULL_FACE);
 				glDisable(GL_POINT_SMOOTH);
 				glPointSize(1);
 				fogFlag = false;
 			} else
 			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 				glEnable(GL_FOG);
+				glEnable(GL_CULL_FACE);
 				glEnable(GL_POINT_SMOOTH);
 				glPointSize(2);
 				fogFlag = true;
@@ -252,7 +260,7 @@ public class Render {
 		glDisable(GL_TEXTURE_2D);
 
 		glLoadIdentity();
-		gluLookAt(0, 0, 0, (float) (player.vecRotXZ[0] * player.vecRotY[1]), (float) (player.vecRotY[0]), (float) (player.vecRotXZ[1] * player.vecRotY[1]), 0, 1, 0);
+		gluLookAt(0, 0, 0, (float) (player.vecRotXZ.x * player.vecRotY.y), (float) (player.vecRotY.x), (float) (player.vecRotXZ.y * player.vecRotY.y), 0, 1, 0);
 	}
 	
 	public void cleanup()

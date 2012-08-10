@@ -22,4 +22,14 @@ public class Point {
 		y = 0;
 		z = 0;
 	}
+	
+	public void divide(float divisor, boolean x, boolean y, boolean z)
+	{
+		if(x)
+			this.x /= divisor;
+		if(y)
+			this.y /= divisor;
+		if(z)
+			this.z /= divisor;
+	}
 }

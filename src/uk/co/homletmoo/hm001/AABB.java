@@ -22,8 +22,16 @@ public class AABB {
 	{
 		Point d1 = new Point(p1.x - box.p2.x, p1.y - box.p2.y, p1.z - box.p2.z);
 		Point d2 = new Point(box.p1.x - p2.x, box.p1.y - p2.y, box.p1.z - p2.z);
-		return d1.x / abs(d1.x) == d2.x / abs(d2.x)
-			&& d1.y / abs(d1.y) == d2.y / abs(d2.y)
-			&& d1.z / abs(d1.z) == d2.z / abs(d2.z);
+		if(d1.x != 0
+		&& d1.y != 0
+		&& d1.z != 0
+		&& d2.x != 0
+		&& d2.y != 0
+		&& d2.z != 0)
+			return d1.x / abs(d1.x) == d2.x / abs(d2.x)
+				&& d1.y / abs(d1.y) == d2.y / abs(d2.y)
+				&& d1.z / abs(d1.z) == d2.z / abs(d2.z);
+		else 
+			return false;
 	}
 }

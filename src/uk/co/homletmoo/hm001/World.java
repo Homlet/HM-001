@@ -1,9 +1,6 @@
 package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
-import static java.lang.Math.floor;
-import static java.lang.Math.abs;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -172,7 +169,7 @@ public class World {
 			
 			// Group like z-rows of blocks together
 			int index = 0;
-			Block slice;
+			Block slice = null;
 			Block[] temp = new Block[B_WORLD_SIZEX * B_CHUNK_SIZE * B_WORLD_HEIGHT * B_CHUNK_SIZE * B_WORLD_SIZEZ * B_CHUNK_SIZE];;
 			for(int x = 0; x < columns.length; x++)
 				for(int y = 0; y < columns[x].length; y++)
@@ -180,6 +177,8 @@ public class World {
 					slice = columns[x][y][0];
 					if(slice == null)
 						slice = new Block(Block.TYPE_AIR, new Point(x, y, 0), false);
+					if(!slice.scaling())
+						slice.startScale();
 					for(int z = 1; z < columns[x][y].length; z++)
 					{
 						if(columns[x][y][z] != null)
@@ -203,21 +202,29 @@ public class World {
 									slice.zn = true;
 							} else
 							{
+								slice.endScale();
 								if(slice.type != Block.TYPE_AIR)
 									temp[index++] = slice;
 								slice = columns[x][y][z];
+								slice.startScale();
 							}
 						} else
 						{
+							slice.endScale();
 							if(slice.type != Block.TYPE_AIR)
 								temp[index++] = slice;
 							slice = new Block(Block.TYPE_AIR, new Point(x, y, z), false);
+							slice.startScale();
 						}
 					}
+					slice.endScale();
 					if(slice != null
 					&& slice.type != Block.TYPE_AIR)
 						temp[index++] = slice;
+					slice.startScale();
 				}
+			if(slice != null)
+				slice.endScale();
 			
 			int capacity = 0;
 			for(int i = 0; i < temp.length; i++)
@@ -238,30 +245,14 @@ public class World {
 	
 	public boolean collide(AABB box)
 	{
-		AABB gridBox = new AABB(new Point(box.p1.x / B_SIZE, box.p1.y / B_SIZE, box.p1.z / B_SIZE), new Point(box.p2.x / B_SIZE, box.p2.y / B_SIZE, box.p2.z / B_SIZE));
-		Point centre = new Point((gridBox.p1.x + gridBox.p2.x) / 2, (gridBox.p1.y + gridBox.p2.y) / 2, (gridBox.p1.z + gridBox.p2.z) / 2);
-		
-		Point[] pa = chunkFromPoint(new Point(centre.x, centre.y, centre.z));
-		Point cp = pa[0];
-		Point bp = pa[1];
-		if(m.get(((int) cp.x + " " + (int) cp.y + " " + (int) cp.z).hashCode()) != null
-		&& m.get(((int) cp.x + " " + (int) cp.y + " " + (int) cp.z).hashCode()).getBlocks()[(int) bp.x][(int) bp.y][(int) bp.z].active)
-			return true;
+		for(int i = 0; i < cache.length; i++)
+		{
+			if(cache[i] != null
+			&& cache[i].active
+			&& cache[i].collide(box))
+				return true;
+		}
 		
 		return false;
-	}
-	
-	private Point[] chunkFromPoint(Point p)
-	{
-		int cx = (int) floor(p.x / B_CHUNK_SIZE);
-		int cy = (int) floor(p.y / B_CHUNK_SIZE);
-		int cz = (int) floor(p.z / B_CHUNK_SIZE);
-		int bx = (int) abs(p.x % B_CHUNK_SIZE);
-		int by = (int) abs(p.y % B_CHUNK_SIZE);
-		int bz = (int) abs(p.z % B_CHUNK_SIZE);
-		Point cp = new Point(cx, cy, cz);
-		Point bp = new Point(bx, by, bz);
-		Point[] pa = new Point[] { cp, bp };
-		return pa;
 	}
 }

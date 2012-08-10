@@ -12,7 +12,7 @@ public class State {
 	
 	public Vector<Renderable> stack = new Vector<Renderable>();
 	public Block[] blocks;
-	public Player player = new Player(new Point(0, 2048, 0));
+	public Player player = new Player(new Point(0, 4092, 0));
 	private Vector<Entity> entities = new Vector<Entity>();
 	private World w;
 	

@@ -1,5 +1,7 @@
 package uk.co.homletmoo.hm001;
 
+import static uk.co.homletmoo.hm001.Attr.B_SIZE;
+
 public class Block extends AABB implements Comparable<Block> {
 	
 	// List of block types:
@@ -23,7 +25,7 @@ public class Block extends AABB implements Comparable<Block> {
 	
 	public Block(int type, Point p, boolean active)
 	{
-		super(new Point(p.x, p.y, p.z), new Point(p.x + 1, p.y + 1, p.z + 1));
+		super(new Point(p.x * B_SIZE, p.y * B_SIZE, p.z * B_SIZE), new Point((p.x + 1) * B_SIZE, (p.y + 1) * B_SIZE, (p.z + 1) * B_SIZE));
 		this.type = type;
 		this.p = p;
 		this.sy = 1;
@@ -42,15 +44,22 @@ public class Block extends AABB implements Comparable<Block> {
 		this.zn = zn;
 	}
 	
+	public void startScaleWithReset()
+	{
+		sy = 1;
+		sz = 1;
+		startScale();
+	}
+	
 	public void startScale()
 	{
-		this.sy = 1;
-		this.sz = 1;
 		scaling = true;
 	}
 	
 	public void endScale()
 	{
+		p1 = new Point(p.x * B_SIZE, p.y * B_SIZE, p.z * B_SIZE);
+		p2 = new Point((p.x + 1) * B_SIZE, (p.y + sy) * B_SIZE, (p.z + sz) * B_SIZE);
 		scaling = false;
 	}
 	

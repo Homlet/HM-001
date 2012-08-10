@@ -12,16 +12,11 @@ public class Entity {
 	private Vector<Renderable> graphics;
 	private Random rand;
 	private int speed;
-	private AABB aabb;
 	
 	public Entity(Point p, Renderable graphic)
 	{
 
 		this.p = p;
-		float sx = graphic.width / 2;
-		float sy = graphic.height / 2;
-		float sz = graphic.depth / 2;
-		aabb = new AABB(new Point(p.x - sx, p.y - sy, p.z - sz), new Point(p.x + sx, p.y + sy, p.z + sz));
 		graphics = new Vector<Renderable>();
 		this.graphics.add(graphic);
 		rand = new Random();

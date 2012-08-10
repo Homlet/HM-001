@@ -6,10 +6,12 @@ public class Attr {
 	
 	// Developer-set:
 	//
+		/** Use fullscreen or windowed */
+		public static final boolean FULLSCREEN = false;
 		/** Width of the display window */
-		public static final int DISPLAY_WIDTH = 1600;
+		public static final int DISPLAY_WIDTH = 1280;
 		/** Height of the display window */
-		public static final int DISPLAY_HEIGHT = 900;
+		public static final int DISPLAY_HEIGHT = 720;
 		/** Render distance in OpenGL units */
 		public static final int RENDER_DISTANCE = 3072;
 	
@@ -19,7 +21,7 @@ public class Attr {
 		public static final double SENS_Y = 0.15;
 
 		/** Gravity */
-		public static final float GRAV = 0.3f;
+		public static final float GRAV = 0.04f;
 		
 		/** Enumeration of renderable primitive types */
 		public static enum PRIM {
@@ -53,10 +55,16 @@ public class Attr {
 		
 		// Player constants:
 		/** Speed of player walking */
-		public static final float P_SPEED = 0.45f;
+		public static final float P_SPEED = 0.5f;
 		
-		/** Maximum falling speed */
-		public static final float P_MAX_SPEEDY = 16;
+		/** Speed of player walking */
+		public static final float P_SPEED_JUMP = 10;
+
+		/** XZ Size of player */
+		public static final float P_SIZE_XZ = 16;
+
+		/** Height of player */
+		public static final float P_SIZE_Y = 48;
 		
 		/** Control for walking forwards */
 		public static final int P_C_FORWARD = Keyboard.KEY_W;
@@ -75,6 +83,15 @@ public class Attr {
 		
 		/** Control for crouching */
 		public static final int P_C_CROUCH = Keyboard.KEY_LSHIFT;
+		
+		// Face constants:
+		public static final byte ANY = 1;
+		public static final byte XP = 2;
+		public static final byte XN = 4;
+		public static final byte YP = 8;
+		public static final byte YN = 16;
+		public static final byte ZP = 32;
+		public static final byte ZN = 64;
 	
 	
 	// Determined at compile-time:

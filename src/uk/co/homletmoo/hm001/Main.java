@@ -43,8 +43,11 @@ public class Main {
 		// Create Display with resolution specified in Attr class
 		try
 		{
-			Display.setDisplayMode(new DisplayMode(Attr.DISPLAY_WIDTH, Attr.DISPLAY_HEIGHT));
-			//Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			if(Attr.FULLSCREEN)
+				Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+			else
+				Display.setDisplayMode(new DisplayMode(Attr.DISPLAY_WIDTH, Attr.DISPLAY_HEIGHT));
+			
 			Display.setTitle("HM OpenGL Test");
 			Display.create();
 		}
@@ -79,7 +82,7 @@ public class Main {
 					input.grab();
 			
 			int delta = getDelta();
-			System.out.print(delta + " ms\n");
+			System.out.print(delta + " ms / " + 1.0f / delta * 1000 + "fps\n");
 			update(delta);
 			
 			System.out.print("Rendering... ");
@@ -90,6 +93,7 @@ public class Main {
 			if(input.grabbed)
 				input.setPos(Attr.DISPLAY_HALFWIDTH, Attr.DISPLAY_HALFHEIGHT);
 			Display.update();
+			Display.sync(60);
 		}
 		
 		input.ungrab();
