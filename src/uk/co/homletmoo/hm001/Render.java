@@ -156,7 +156,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -174,7 +174,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -192,7 +192,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -210,7 +210,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -228,7 +228,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -246,7 +246,7 @@ public class Render {
 					glLoadIdentity();
 					glRotatef(-player.rotY, 1, 0, 0);
 					glRotatef(-player.rotX, 0, 1, 0);
-					glTranslatef(blocks[m].p.x * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
+					glTranslatef((blocks[m].p.x + 0.5f) * B_SIZE - player.p.x, (blocks[m].p.y + 0.5f * blocks[m].sy) * B_SIZE - player.p.y, (blocks[m].p.z + 0.5f * blocks[m].sz) * B_SIZE - player.p.z);
 					glScalef(B_SIZE / 2, (B_SIZE * blocks[m].sy) / 2, (B_SIZE * blocks[m].sz) / 2);
 					glMatrixMode(GL_TEXTURE);
 					glLoadIdentity();
@@ -256,7 +256,7 @@ public class Render {
 				}
 			}
 		}
-		System.out.print("Blocks: " + blockCount + " ");
+		System.out.print("Bls: " + blockCount + " ");
 		glDisable(GL_TEXTURE_2D);
 
 		glLoadIdentity();

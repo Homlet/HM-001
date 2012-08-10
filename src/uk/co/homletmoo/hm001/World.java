@@ -116,7 +116,7 @@ public class World {
 					if(column == null)
 						column = new Block(Block.TYPE_AIR, new Point(x, 0, z), false);
 					if(!column.scaling())
-						column.startScale();
+						column.startScaleWithReset();
 					for(int y = 1; y < blocks[x][z].length; y++)
 					{
 						if(blocks[x][z][y] != null)
@@ -145,7 +145,7 @@ public class World {
 								else
 									columns[x][(int) column.p.y][z] = null;
 								column = blocks[x][z][y];
-								column.startScale();
+								column.startScaleWithReset();
 							}
 						} else
 						{
@@ -155,14 +155,14 @@ public class World {
 							else
 								columns[x][(int) column.p.y][z] = null;
 							column = new Block(Block.TYPE_AIR, new Point(x, y, z), false);
-							column.startScale();
+							column.startScaleWithReset();
 						}
 					}
 					column.endScale();
 					if(column != null
 					&& column.type != Block.TYPE_AIR)
 						columns[x][(int) (int) column.p.y][z] = column;
-					column.startScale();
+					column.startScaleWithReset();
 				}
 			if(column != null)
 				column.endScale();

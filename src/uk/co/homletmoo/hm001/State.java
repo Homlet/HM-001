@@ -34,7 +34,7 @@ public class State {
 		
 		stack.clear();
 		
-		player.update(delta, input, w);
+		player.update(input, w);
 		w.update(delta, input, rand);
 		blocks = w.getBlocks(p);
 		

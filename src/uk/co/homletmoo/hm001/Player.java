@@ -1,75 +1,25 @@
 package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
-import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
+import static java.lang.Math.floor;
 
 public class Player {
 	
 	public Point p;
 	public Point v;
-	public Point a;
 	public float rotX, rotY;
 	public Point vecRotXZ;
 	public Point vecRotY;
-	public AABB aabb;
 	
 	public Player(Point p)
 	{
 		this.p = p;
-		a = new Point(0, 0, 0);
 		v = new Point(0, 0, 0);
 	}
 	
-	public void update(int delta, Input input, World w)
-	{
-		//
-		// HANDLE COLLISION ----------------------------------------------------------------------------------------------------------------------------------------------
-		//
-			byte col = 0;
-			aabb = new AABB(new Point(p.x - P_SIZE_XZ / 2, p.y - P_SIZE_Y, p.z - P_SIZE_XZ / 2), new Point(p.x + P_SIZE_XZ / 2, p.y, p.z + P_SIZE_XZ / 2));
-			
-			if(w.collide(aabb))
-				col |= ANY;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x + P_SIZE_XZ, aabb.p1.y, aabb.p1.z),
-									new Point(aabb.p2.x + P_SIZE_XZ, aabb.p2.y, aabb.p2.z))
-								))
-				col |= XP;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x - P_SIZE_XZ, aabb.p1.y, aabb.p1.z),
-									new Point(aabb.p2.x - P_SIZE_XZ, aabb.p2.y, aabb.p2.z))
-								))
-				col |= XN;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x, aabb.p1.y + P_SIZE_Y, aabb.p1.z),
-									new Point(aabb.p2.x, aabb.p2.y + P_SIZE_Y, aabb.p2.z))
-								))
-				col |= YP;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x, aabb.p1.y - P_SIZE_Y, aabb.p1.z),
-									new Point(aabb.p2.x, aabb.p2.y - P_SIZE_Y, aabb.p2.z))
-								))
-				col |= YN;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x, aabb.p1.y, aabb.p1.z + P_SIZE_XZ),
-									new Point(aabb.p2.x, aabb.p2.y, aabb.p2.z + P_SIZE_XZ))
-								))
-				col |= ZP;
-			
-			if(w.collide(new AABB(
-									new Point(aabb.p1.x, aabb.p1.y, aabb.p1.z - P_SIZE_XZ),
-									new Point(aabb.p2.x, aabb.p2.y, aabb.p2.z - P_SIZE_XZ))
-								))
-				col |= ZN;
-		//
-		// END COLLISION -------------------------------------------------------------------------------------------------------------------------------------------------
-		//
-		
+	public void update(Input input, World w)
+	{		
 		//
 		// HANDLE INPUT --------------------------------------------------------------------------------------------------------------------------------------------------
 		//
@@ -106,25 +56,16 @@ public class Player {
 		// END INPUT -----------------------------------------------------------------------------------------------------------------------------------------------------
 		//
 		
-		if(!walking && (col & YN) != 0)
-		{
+		if(!walking)
 			v.divide(1.2f, true, false, true);
-		}
-		
-		if((col & YN) == 0)
-		{
-			v.y -= GRAV * delta;
-		} else if(v.y < 0)
-		{
-			v.y = 0;
-		}
 
+		v.y -= GRAV;
 		v.divide(1.025f, false, true, false);
 		v.divide(1.2f, true, false, true);
 		
 		if(input.grabbed)
 			rotX -= input.mouseDX * SENS_X;
-		double radRotX = degToRad(rotX);
+		double radRotX = toRadians(rotX);
 		vecRotXZ = radToVec(radRotX);
 		
 		if(input.grabbed)
@@ -133,58 +74,68 @@ public class Player {
 			rotY = -89;
 		else if(rotY > 89)
 			rotY = 89;
-		double radRotY = degToRad(rotY);
+		double radRotY = toRadians(rotY);
 		vecRotY = radToVec(radRotY);
 		
-		if(v.x != 0
-		&& v.x / abs(v.x) > 0)
-		{
-			if((col & XP) == 0)
-				p.x += v.x;
-			else v.x = 0;
-		} else
-		{
-			if((col & XN) == 0)
-				p.x += v.x;
-			else v.x = 0;
-		}
-
-		if(v.y != 0
-		&& v.y / abs(v.y) > 0)
-		{
-			if((col & YP) == 0)
-				p.y += v.y;
-			else v.y = 0;
-		} else
-		{
-			if((col & YN) == 0)
-				p.y += v.y;
-			else v.y = 0;
-		}
-
-		if(v.z != 0
-		&& v.z / abs(v.z) > 0)
-		{
-			if((col & ZP) == 0)
-				p.z += v.z;
-			else v.z = 0;
-		} else
-		{
-			if((col & ZN) == 0)
-				p.z += v.z;
-			else v.z = 0;
-		}
+		attemptMove(w);
 	}
 	
-	private double degToRad(double degrees)
+	private void attemptMove(World w)
 	{
-		double radians = degrees * (Math.PI / 180);
-		return radians;
+		Point oP = p;
+		Point nP = null;
+		
+		// Check x movement:
+		if(v.x != 0)
+		{
+			nP = new Point(oP.x + v.x, oP.y, oP.z);
+			if(w.collide(new AABB(new Point(nP.x - P_SIZE_XZ / 2, nP.y - P_SIZE_Y, nP.z - P_SIZE_XZ / 2), new Point(nP.x + P_SIZE_XZ / 2, nP.y, nP.z + P_SIZE_XZ / 2))))
+			{
+				v.x = 0;
+				if(nP.x > p.x)
+					p.x = (float) (floor(p.x / B_SIZE + 1) * B_SIZE - P_SIZE_XZ / 2);
+				else
+					p.x = (float) (floor(p.x / B_SIZE) * B_SIZE + P_SIZE_XZ / 2);
+			}
+			else
+				p.x = nP.x;
+		}
+		
+		// Check z movement:
+		if(v.z != 0)
+		{
+			nP = new Point(oP.x, oP.y, oP.z + v.z);
+			if(w.collide(new AABB(new Point(nP.x - P_SIZE_XZ / 2, nP.y - P_SIZE_Y, nP.z - P_SIZE_XZ / 2), new Point(nP.x + P_SIZE_XZ / 2, nP.y, nP.z + P_SIZE_XZ / 2))))
+			{
+				v.z = 0;
+				if(nP.z > p.z)
+					p.z = (float) (floor(p.z / B_SIZE + 1) * B_SIZE - P_SIZE_XZ / 2);
+				else
+					p.z = (float) (floor(p.z / B_SIZE) * B_SIZE + P_SIZE_XZ / 2);
+			}
+			else
+				p.z = nP.z;
+		}
+		
+		// Check y movement:
+		if(v.y != 0)
+		{
+			nP = new Point(oP.x, oP.y + v.y, oP.z);
+			if(w.collide(new AABB(new Point(nP.x - P_SIZE_XZ / 2, nP.y - P_SIZE_Y, nP.z - P_SIZE_XZ / 2), new Point(nP.x + P_SIZE_XZ / 2, nP.y, nP.z + P_SIZE_XZ / 2))))
+			{
+				v.y = 0;
+				if(nP.y > p.y)
+					p.y = (float) (floor(p.y / B_SIZE + 1) * B_SIZE);
+				else
+					p.y = (float) (floor(p.y / B_SIZE - 1) * B_SIZE + P_SIZE_Y);
+			}
+			else
+				p.y = nP.y;
+		}
 	}
 	
 	private Point radToVec(double radians)
 	{
-		Point vector = new Point(Math.sin(radians), Math.cos(radians), 0);
-		return vector;
+		return new Point(Math.sin(radians), Math.cos(radians), 0);
 	}
 }

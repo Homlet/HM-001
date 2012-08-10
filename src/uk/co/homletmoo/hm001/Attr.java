@@ -21,7 +21,7 @@ public class Attr {
 		public static final double SENS_Y = 0.15;
 
 		/** Gravity */
-		public static final float GRAV = 0.04f;
+		public static final float GRAV = 0.35f;
 		
 		/** Enumeration of renderable primitive types */
 		public static enum PRIM {
@@ -58,7 +58,7 @@ public class Attr {
 		public static final float P_SPEED = 0.5f;
 		
 		/** Speed of player walking */
-		public static final float P_SPEED_JUMP = 10;
+		public static final float P_SPEED_JUMP = 6;
 
 		/** XZ Size of player */
 		public static final float P_SIZE_XZ = 16;

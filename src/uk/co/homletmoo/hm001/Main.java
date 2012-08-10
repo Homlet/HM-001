@@ -82,12 +82,12 @@ public class Main {
 					input.grab();
 			
 			int delta = getDelta();
-			System.out.print(delta + " ms / " + 1.0f / delta * 1000 + "fps\n");
+			System.out.print(1.0f / delta * 1000 + "fps |\n");
 			update(delta);
 			
-			System.out.print("Rendering... ");
+			System.out.print("| R. ");
 			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player, rand);
-			System.out.print("Updating... ");
+			System.out.print("| U. ");
 			
 			input.pollInput();
 			if(input.grabbed)

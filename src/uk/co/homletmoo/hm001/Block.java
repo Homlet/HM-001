@@ -68,9 +68,9 @@ public class Block extends AABB implements Comparable<Block> {
 		return scaling;
 	}
 	
+	/** Override for block logic */
 	public void update()
 	{
-		
 	}
 
 	@Override
