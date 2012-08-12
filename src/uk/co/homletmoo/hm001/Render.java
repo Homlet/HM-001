@@ -15,8 +15,7 @@ import org.lwjgl.input.Keyboard;
 public class Render {
 	
 	// DEBUGGING ONLY:
-	private boolean fogFlag = false;
-	private int fogToggleTimer = 30;
+	private boolean fogFlag = true;
 	
 	public void init()
 	{
@@ -54,7 +53,7 @@ public class Render {
 
 		glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(90, (float) DISPLAY_WIDTH / (float) DISPLAY_HEIGHT, 1, RENDER_DISTANCE);
+			gluPerspective(70, (float) DISPLAY_WIDTH / (float) DISPLAY_HEIGHT, 1, RENDER_DISTANCE);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -70,7 +69,7 @@ public class Render {
 		
 		
 		// Toggle debugging features -------------------------
-		if(DEBUGGING && fogToggleTimer++ > 30 && Keyboard.isKeyDown(Keyboard.KEY_F))
+		if(DEBUGGING && input.pressed(Keyboard.KEY_F))
 		{
 			if(fogFlag)
 			{
@@ -89,8 +88,6 @@ public class Render {
 				glPointSize(2);
 				fogFlag = true;
 			}
-
-			fogToggleTimer = 0;
 		}
 		
 		// Render entities -----------------------------------
@@ -130,10 +127,11 @@ public class Render {
 		for(int t = 1; t < Block.TYPE_LENGTH; t++)
 		{
 			int lastIndex = index;
-			if(t == Block.TYPE_WATER + 128)
+			if(t == Block.TYPE_WATER + 128
+			|| !fogFlag)
 			{
 				glDisable(GL_TEXTURE_2D);
-				glColor4f(0.9f, 0.9f, 1, 0.5f);
+				glColor4f(0.9f, 0.9f, 1, 0.4f);
 			}
 			else
 			{

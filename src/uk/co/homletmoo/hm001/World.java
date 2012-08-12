@@ -8,59 +8,23 @@ import java.util.Random;
 
 import libnoiseforjava.exception.ExceptionInvalidParam;
 import libnoiseforjava.module.*;
-import libnoiseforjava.util.NoiseMap;
-import libnoiseforjava.util.NoiseMapBuilderPlane;
 
 public class World {
 
 	public boolean changed = true;
 	private Map<Integer, Chunk> m;
-	private NoiseMap heightmap;
 	private Block[] cache;
 	
 	public World(Random rand)
 	{
+		Perlin p = null;
 		try {
-			RidgedMulti rmf = new RidgedMulti();
-			rmf.setSeed(rand.nextInt());
-			rmf.setOctaveCount(6);
-			rmf.setFrequency(5.5);
-			rmf.setLacunarity(2);
-
-			Perlin p = new Perlin();
+			p = new Perlin();
 			p.setSeed(rand.nextInt());
-			p.setOctaveCount(16);
-			p.setFrequency(4);
-			p.setPersistence(0.55);
+			p.setOctaveCount(8);
+			p.setFrequency(0.1);
+			p.setPersistence(0.2);
 			
-			Const c = new Const();
-			c.setConstValue(0.1);
-			
-			Max m = new Max(p, c);
-			
-			Perlin p1 = new Perlin();
-			p1.setSeed(rand.nextInt());
-			p1.setOctaveCount(1);
-			p1.setFrequency(12);
-			p1.setPersistence(0);
-			p1.setLacunarity(1);
-			
-			ScaleBias sb = new ScaleBias(p1);
-			sb.setScale(2);
-			sb.setBias(-1.2);
-			
-			Select s = new Select(m, rmf, sb);
-			s.setEdgeFalloff(0.29);
-			s.setBounds(-1, 1);			
-			
-			heightmap = new NoiseMap(B_WORLD_SIZEX * B_CHUNK_SIZE, B_WORLD_SIZEZ * B_CHUNK_SIZE);
-			
-			NoiseMapBuilderPlane heightmapBuilder = new NoiseMapBuilderPlane();
-			heightmapBuilder.setSourceModule(s);
-			heightmapBuilder.setDestNoiseMap(heightmap);
-			heightmapBuilder.setDestSize(B_WORLD_SIZEX * B_CHUNK_SIZE, B_WORLD_SIZEZ * B_CHUNK_SIZE);
-			heightmapBuilder.setBounds(0, (double) B_WORLD_SIZEX / 20, 0, (double) B_WORLD_SIZEX / 20);
-			heightmapBuilder.build();
 		} catch (ExceptionInvalidParam e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -73,21 +37,11 @@ public class World {
 			for(int y = 0; y < B_WORLD_HEIGHT; y++)
 				for(int z = 0; z < B_WORLD_SIZEZ; z++)
 				{
-					m.put((x + " " + y + " " + z).hashCode(), new Chunk(x, y, z, heightmap));
+					m.put((x + " " + y + " " + z).hashCode(), new Chunk(x, y, z, p));
 				}
 	}
 	
-	public void update(int delta, Input input, Random rand)
-	{
-		for(int x = 0; x < B_WORLD_SIZEX; x++)
-			for(int y = 0; y < B_WORLD_HEIGHT; y++)
-				for(int z = 0; z < B_WORLD_SIZEZ; z++)
-				{
-					m.get((x + " " + y + " " + z).hashCode()).update(delta, input, rand);
-				}
-	}
-	
-	public Block[] getBlocks(Player p)
+	public Block[] getBlocks()
 	{
 		if(changed)
 		{
@@ -96,7 +50,7 @@ public class World {
 				for(int z = 0; z < B_WORLD_SIZEZ; z++)
 					for(int y = 0; y < B_WORLD_HEIGHT; y++)
 					{
-						Block[][][] temp = m.get((x + " " + y + " " + z).hashCode()).rebuild((HashMap<Integer, Chunk>) m, p);
+						Block[][][] temp = m.get((x + " " + y + " " + z).hashCode()).rebuild((HashMap<Integer, Chunk>) m);
 						for(int x1 = 0; x1 < B_CHUNK_SIZE; x1++)
 							for(int z1 = 0; z1 < B_CHUNK_SIZE; z1++)
 								for(int y1 = 0; y1 < B_CHUNK_SIZE; y1++)

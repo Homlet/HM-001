@@ -12,7 +12,7 @@ public class State {
 	
 	public Vector<Renderable> stack = new Vector<Renderable>();
 	public Block[] blocks;
-	public Player player = new Player(new Point(0, 4092, 0));
+	public Player player = new Player(new Point(0, 1024, 0));
 	private Vector<Entity> entities = new Vector<Entity>();
 	private World w;
 	
@@ -27,16 +27,15 @@ public class State {
 		}
 	}
 	
-	public void update(int delta, Input input, Random rand, Player p)
+	public void update(int delta, Input input, Random rand)
 	{
 		if(input.pressed(Keyboard.KEY_F11))
 			w = new World(rand);
 		
 		stack.clear();
 		
-		player.update(input, w);
-		w.update(delta, input, rand);
-		blocks = w.getBlocks(p);
+		player.update(input, w, delta);
+		blocks = w.getBlocks();
 		
 		Iterator<Entity> i = entities.iterator();
 		while(i.hasNext())

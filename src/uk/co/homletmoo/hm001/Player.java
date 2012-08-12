@@ -11,6 +11,7 @@ public class Player {
 	public float rotX, rotY;
 	public Point vecRotXZ;
 	public Point vecRotY;
+	private Point oP, nP;
 	
 	public Player(Point p)
 	{
@@ -18,51 +19,8 @@ public class Player {
 		v = new Point(0, 0, 0);
 	}
 	
-	public void update(Input input, World w)
+	public void update(Input input, World w, int delta)
 	{		
-		//
-		// HANDLE INPUT --------------------------------------------------------------------------------------------------------------------------------------------------
-		//
-			boolean walking = false;
-			if(input.keys[P_C_FORWARD])
-			{
-				walking = true;
-				v.x += -vecRotXZ.x * P_SPEED;
-				v.z += -vecRotXZ.y * P_SPEED;
-			}
-			if(input.keys[P_C_BACKWARD])
-			{
-				walking = true;
-				v.x += vecRotXZ.x * P_SPEED;
-				v.z += vecRotXZ.y * P_SPEED;
-			}
-			if(input.keys[P_C_LEFT])
-			{
-				walking = true;
-				v.x += -vecRotXZ.y * P_SPEED;
-				v.z += vecRotXZ.x * P_SPEED;
-			}
-			if(input.keys[P_C_RIGHT])
-			{
-				walking = true;
-				v.x += vecRotXZ.y * P_SPEED;
-				v.z += -vecRotXZ.x * P_SPEED;
-			}
-			if(input.pressed(P_C_JUMP))
-			{
-				v.y = P_SPEED_JUMP;
-			}
-		//
-		// END INPUT -----------------------------------------------------------------------------------------------------------------------------------------------------
-		//
-		
-		if(!walking)
-			v.divide(1.2f, true, false, true);
-
-		v.y -= GRAV;
-		v.divide(1.025f, false, true, false);
-		v.divide(1.2f, true, false, true);
-		
 		if(input.grabbed)
 			rotX -= input.mouseDX * SENS_X;
 		double radRotX = toRadians(rotX);
@@ -77,13 +35,55 @@ public class Player {
 		double radRotY = toRadians(rotY);
 		vecRotY = radToVec(radRotY);
 		
+		//
+		// HANDLE INPUT --------------------------------------------------------------------------------------------------------------------------------------------------
+		//
+			boolean walking = false;
+			v.x = v.z = 0;
+			if(input.keys[P_C_FORWARD])
+			{
+				walking = true;
+				v.x += -vecRotXZ.x * P_SPEED * delta;
+				v.z += -vecRotXZ.y * P_SPEED * delta;
+			}
+			if(input.keys[P_C_BACKWARD])
+			{
+				walking = true;
+				v.x += vecRotXZ.x * P_SPEED * delta;
+				v.z += vecRotXZ.y * P_SPEED * delta;
+			}
+			if(input.keys[P_C_LEFT])
+			{
+				walking = true;
+				v.x += -vecRotXZ.y * P_SPEED * delta;
+				v.z += vecRotXZ.x * P_SPEED * delta;
+			}
+			if(input.keys[P_C_RIGHT])
+			{
+				walking = true;
+				v.x += vecRotXZ.y * P_SPEED * delta;
+				v.z += -vecRotXZ.x * P_SPEED * delta;
+			}
+			if(input.pressed(P_C_JUMP))
+			{
+				v.y = P_SPEED_JUMP;
+			}
+		//
+		// END INPUT -----------------------------------------------------------------------------------------------------------------------------------------------------
+		//
+		
+		if(!walking)
+			v.x = v.z = 0;
+
+		v.y -= GRAV * delta;
+		
 		attemptMove(w);
 	}
 	
 	private void attemptMove(World w)
 	{
-		Point oP = p;
-		Point nP = null;
+		oP = p;
+		nP = null;
 		
 		// Check x movement:
 		if(v.x != 0)

@@ -5,7 +5,7 @@ import static uk.co.homletmoo.hm001.Attr.B_SIZE;
 public class Block extends AABB implements Comparable<Block> {
 	
 	// List of block types:
-	public static final int TYPE_LENGTH = 6;
+	public static final byte TYPE_LENGTH = 6;
 	public static final byte TYPE_AIR = -128;
 	public static final byte TYPE_GRASS = -127;
 	public static final byte TYPE_DIRT = -126;
@@ -27,7 +27,7 @@ public class Block extends AABB implements Comparable<Block> {
 	{
 		super(new Point(p.x * B_SIZE, p.y * B_SIZE, p.z * B_SIZE), new Point((p.x + 1) * B_SIZE, (p.y + 1) * B_SIZE, (p.z + 1) * B_SIZE));
 		this.type = type;
-		this.p = p;
+		this.p = new Point(p);
 		this.sy = 1;
 		this.sz = 1;
 		this.active = active;
@@ -66,11 +66,6 @@ public class Block extends AABB implements Comparable<Block> {
 	public boolean scaling()
 	{
 		return scaling;
-	}
-	
-	/** Override for block logic */
-	public void update()
-	{
 	}
 
 	@Override

@@ -34,4 +34,9 @@ public class AABB {
 		else 
 			return false;
 	}
+	
+	public boolean collidePlane(float[] plane)
+	{
+		return plane[0] * p1.x + plane[1] * p1.y + plane[2] * p1.z + plane[3] >= 0;
+	}
 }

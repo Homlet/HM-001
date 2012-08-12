@@ -21,7 +21,7 @@ public class Attr {
 		public static final double SENS_Y = 0.15;
 
 		/** Gravity */
-		public static final float GRAV = 0.35f;
+		public static final float GRAV = 0.03f;
 		
 		/** Enumeration of renderable primitive types */
 		public static enum PRIM {
@@ -41,10 +41,10 @@ public class Attr {
 		public static final int B_WORLD_SIZEX = 3;
 
 		/** World height in chunks */
-		public static final int B_WORLD_HEIGHT = 6;
+		public static final int B_WORLD_HEIGHT = 3;
 
 		/** World height in chunks */
-		public static final int B_WORLD_SIZEZ = 4;
+		public static final int B_WORLD_SIZEZ = 2;
 
 		/** Ground level in blocks */
 		public static final int B_SEA_LEVEL = 32;
@@ -55,7 +55,7 @@ public class Attr {
 		
 		// Player constants:
 		/** Speed of player walking */
-		public static final float P_SPEED = 0.5f;
+		public static final float P_SPEED = 0.15f;
 		
 		/** Speed of player walking */
 		public static final float P_SPEED_JUMP = 6;
@@ -83,15 +83,6 @@ public class Attr {
 		
 		/** Control for crouching */
 		public static final int P_C_CROUCH = Keyboard.KEY_LSHIFT;
-		
-		// Face constants:
-		public static final byte ANY = 1;
-		public static final byte XP = 2;
-		public static final byte XN = 4;
-		public static final byte YP = 8;
-		public static final byte YN = 16;
-		public static final byte ZP = 32;
-		public static final byte ZN = 64;
 	
 	
 	// Determined at compile-time:

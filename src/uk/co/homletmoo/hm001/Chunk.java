@@ -1,22 +1,20 @@
 package uk.co.homletmoo.hm001;
 
 import static uk.co.homletmoo.hm001.Attr.*;
-import static java.lang.Math.floor;
 
 import java.util.HashMap;
-import java.util.Random;
 
-import libnoiseforjava.util.NoiseMap;
+import libnoiseforjava.module.ModuleBase;
 
 public class Chunk {
 	
 	// Note, blocks are stored in xyz format in blocks, and xzy format in culled
 	// y is up
+	public boolean changed = true;
 	private Block[][][] blocks, culled;
-	private boolean changed = true;
 	private int cx, cy, cz;
 	
-	public Chunk(int cx, int cy, int cz, NoiseMap heightmap)
+	public Chunk(int cx, int cy, int cz, ModuleBase noise)
 	{
 		this.cx = cx;
 		this.cy = cy;
@@ -28,23 +26,11 @@ public class Chunk {
 			for(int y = 0; y < blocks[x].length; y++)
 				for(int z = 0; z < blocks[x][y].length; z++)
 				{
-					if(gP(y, cy) - B_SEA_LEVEL == floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4))
-						blocks[x][y][z] = new Block(Block.TYPE_GRASS, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
-					
-					else if(gP(y, cy) - B_SEA_LEVEL < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 4)
-						&& gP(y, cy) - B_SEA_LEVEL >= floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 16))
+					if(noise.getValue(gP(x, cx), gP(y, cy), gP(z, cz)) > gP(y, cy) / 100)
 						blocks[x][y][z] = new Block(Block.TYPE_DIRT, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
-					
-					else if(gP(y, cy) - B_SEA_LEVEL < floor(heightmap.getValue(gP(x, cx), gP(z, cz)) * B_WORLD_HEIGHT_BL / 16) || gP(y, cy) == 0)
-						blocks[x][y][z] = new Block(Block.TYPE_STONE, new Point(gP(x, cx), gP(y, cy), gP(z, cz)), true);
-					
 					else
 						blocks[x][y][z] = new BlockAir(new Point(gP(x, cx), gP(y, cy), gP(z, cz)));
 				}
-	}
-	
-	public void update(int delta, Input input, Random rand)
-	{
 	}
 	
 	public Block[][][] getBlocks()
@@ -52,7 +38,7 @@ public class Chunk {
 		return blocks;
 	}
 	
-	public Block[][][] rebuild(HashMap<Integer, Chunk> m, Player p)
+	public Block[][][] rebuild(HashMap<Integer, Chunk> m)
 	{
 		if(changed)
 		{

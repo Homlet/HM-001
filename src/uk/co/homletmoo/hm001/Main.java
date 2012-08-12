@@ -82,12 +82,10 @@ public class Main {
 					input.grab();
 			
 			int delta = getDelta();
-			System.out.print(1.0f / delta * 1000 + "fps |\n");
+			System.out.print(1.0f / delta * 1000 + "\n");
 			update(delta);
 			
-			System.out.print("| R. ");
 			render.render((int)(getTime() - firstFrame), stack, state.blocks, input, state.player, rand);
-			System.out.print("| U. ");
 			
 			input.pollInput();
 			if(input.grabbed)
@@ -105,7 +103,7 @@ public class Main {
 	/** Update call: calls updates for states and pan-state objects */
 	public void update(int delta)
 	{
-		state.update(delta, input, rand, state.player);
+		state.update(delta, input, rand);
 		stack.clear();
 		stack.addAll(state.stack);
 	}
